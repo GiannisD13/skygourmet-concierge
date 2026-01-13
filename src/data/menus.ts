@@ -122,4 +122,80 @@ export const menuTiers: MenuTier[] = [
       },
     ],
   },
+  {
+    id: 'custom',
+    name: 'Custom Selection',
+    subtitle: 'Curate Your Experience',
+    description: 'Design your perfect in-flight menu by selecting individual dishes from our Executive and Mediterranean collections. Ideal for mixed preferences and dietary requirements.',
+    price: 1200,
+    image: mediterraneanImg,
+    isCustom: true,
+    items: [
+      {
+        id: 'suggested-starters',
+        name: 'Suggested Starters',
+        description: 'Popular combinations',
+        items: [
+          'Fresh oysters on crushed ice',
+          'Smoked Norwegian salmon with cream cheese',
+          'Aged Gruyère & Manchego selection',
+          'Santorini cherry tomato salad',
+        ],
+      },
+      {
+        id: 'suggested-mains',
+        name: 'Suggested Mains',
+        description: 'Guest favorites',
+        items: [
+          'Grilled octopus with olive oil & lemon',
+          'Lamb chops with rosemary',
+          'Seared tuna with sesame crust',
+          'Moussaka in individual portions',
+        ],
+      },
+      {
+        id: 'suggested-sides',
+        name: 'Sweet & Extras',
+        description: 'Complete the experience',
+        items: [
+          'Fresh butter croissants & pain au chocolat',
+          'Baklava with pistachio',
+          'Greek yogurt with thyme honey',
+          'Premium espresso & specialty teas',
+        ],
+      },
+    ],
+  },
 ];
+
+// All available dishes for custom selection
+export const allDishes = {
+  starters: [
+    { id: 'oysters', name: 'Fresh oysters on crushed ice', price: 85, category: 'Seafood' },
+    { id: 'salmon', name: 'Smoked Norwegian salmon with cream cheese', price: 45, category: 'Breakfast' },
+    { id: 'cheese', name: 'Aged Gruyère & Manchego selection', price: 55, category: 'Charcuterie' },
+    { id: 'tomato-salad', name: 'Santorini cherry tomato salad', price: 35, category: 'Salads' },
+    { id: 'feta', name: 'Barrel-aged feta with capers', price: 40, category: 'Greek' },
+    { id: 'prosciutto', name: 'Italian prosciutto di Parma', price: 50, category: 'Charcuterie' },
+    { id: 'langoustine', name: 'Langoustine tartare', price: 95, category: 'Seafood' },
+  ],
+  mains: [
+    { id: 'octopus', name: 'Grilled octopus with olive oil & lemon', price: 120, category: 'Seafood' },
+    { id: 'lamb', name: 'Lamb chops with rosemary', price: 95, category: 'Meat' },
+    { id: 'tuna', name: 'Seared tuna with sesame crust', price: 85, category: 'Seafood' },
+    { id: 'moussaka', name: 'Moussaka in individual portions', price: 65, category: 'Greek' },
+  ],
+  desserts: [
+    { id: 'croissants', name: 'Fresh butter croissants & pain au chocolat', price: 25, category: 'Pastry' },
+    { id: 'baklava', name: 'Baklava with pistachio', price: 30, category: 'Greek' },
+    { id: 'yogurt', name: 'Greek yogurt with thyme honey', price: 20, category: 'Breakfast' },
+    { id: 'galaktoboureko', name: 'Galaktoboureko portions', price: 28, category: 'Greek' },
+    { id: 'loukoumades', name: 'Greek loukoumades', price: 25, category: 'Greek' },
+    { id: 'fruit', name: 'Seasonal fruit arrangement', price: 35, category: 'Fresh' },
+  ],
+  beverages: [
+    { id: 'espresso', name: 'Premium espresso & specialty teas', price: 15, category: 'Coffee' },
+    { id: 'champagne', name: 'Champagne pairing', price: 180, category: 'Wine' },
+    { id: 'assyrtiko', name: 'Rare Greek Assyrtiko reserve', price: 120, category: 'Wine' },
+  ],
+};

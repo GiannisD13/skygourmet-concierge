@@ -22,6 +22,7 @@ export interface MenuTier {
   image: string;
   items: MenuItem[];
   featured?: boolean;
+  isCustom?: boolean;
 }
 
 export interface OrderDetails {
