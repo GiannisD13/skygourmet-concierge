@@ -37,7 +37,7 @@ const MenuDetailDialog: React.FC<MenuDetailDialogProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-2xl md:w-full md:max-h-[85vh] bg-card rounded-lg shadow-hover z-50 overflow-hidden flex flex-col"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-2xl max-h-[85vh] bg-card rounded-lg shadow-hover z-50 overflow-hidden flex flex-col"
           >
             {/* Header Image */}
             <div className="relative h-48 md:h-56 flex-shrink-0">
