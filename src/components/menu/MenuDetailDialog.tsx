@@ -31,14 +31,15 @@ const MenuDetailDialog: React.FC<MenuDetailDialogProps> = ({
             className="fixed inset-0 bg-foreground/60 backdrop-blur-sm z-50"
           />
 
-          {/* Dialog */}
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 50, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-2xl max-h-[85vh] bg-card rounded-lg shadow-hover z-50 overflow-hidden flex flex-col"
-          >
+          {/* Dialog Container - centered with flexbox */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, y: 50, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 50, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-2xl max-h-[85vh] bg-card rounded-lg shadow-hover overflow-hidden flex flex-col"
+            >
             {/* Header Image */}
             <div className="relative h-48 md:h-56 flex-shrink-0">
               <img
@@ -116,11 +117,13 @@ const MenuDetailDialog: React.FC<MenuDetailDialogProps> = ({
                 Add to Flight
               </Button>
             </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
   );
 };
+
 
 export default MenuDetailDialog;
