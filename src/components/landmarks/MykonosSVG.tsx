@@ -7,118 +7,316 @@ interface MykonosSVGProps {
 const MykonosSVG = ({ isHovered }: MykonosSVGProps) => {
   return (
     <motion.svg
-      viewBox="0 0 300 180"
+      viewBox="0 0 300 200"
       className="w-full h-full"
       initial={false}
     >
-      {/* Clean background */}
-      <rect width="300" height="180" fill="transparent" />
+      {/* Gradient definitions */}
+      <defs>
+        <linearGradient id="skyGradientMyk" x1="0%" y1="0%" x2="0%" y2="100%">
+          <motion.stop
+            offset="0%"
+            animate={{ stopColor: isHovered ? 'hsl(210, 80%, 55%)' : 'hsl(220, 30%, 15%)' }}
+            transition={{ duration: 0.5 }}
+          />
+          <motion.stop
+            offset="50%"
+            animate={{ stopColor: isHovered ? 'hsl(200, 70%, 65%)' : 'hsl(220, 25%, 25%)' }}
+            transition={{ duration: 0.5 }}
+          />
+          <motion.stop
+            offset="100%"
+            animate={{ stopColor: isHovered ? 'hsl(195, 80%, 70%)' : 'hsl(220, 30%, 35%)' }}
+            transition={{ duration: 0.5 }}
+          />
+        </linearGradient>
+        <linearGradient id="seaGradientMyk" x1="0%" y1="0%" x2="0%" y2="100%">
+          <motion.stop
+            offset="0%"
+            animate={{ stopColor: isHovered ? 'hsl(195, 90%, 55%)' : 'hsl(220, 40%, 30%)' }}
+            transition={{ duration: 0.5 }}
+          />
+          <motion.stop
+            offset="100%"
+            animate={{ stopColor: isHovered ? 'hsl(200, 85%, 45%)' : 'hsl(220, 45%, 20%)' }}
+            transition={{ duration: 0.5 }}
+          />
+        </linearGradient>
+      </defs>
 
-      {/* Subtle horizon line */}
-      <motion.line
-        x1="40" y1="135" x2="260" y2="135"
-        strokeWidth="0.5"
-        animate={{ stroke: isHovered ? 'hsl(45, 30%, 35%)' : 'hsl(0, 0%, 22%)' }}
+      {/* Background Sky */}
+      <rect width="300" height="200" fill="url(#skyGradientMyk)" />
+
+      {/* Sun */}
+      <motion.circle
+        cx="250"
+        cy="45"
+        r="20"
+        animate={{ 
+          fill: isHovered ? 'hsl(45, 100%, 60%)' : 'hsl(220, 20%, 50%)',
+          filter: isHovered ? 'drop-shadow(0 0 20px hsl(45, 100%, 50%))' : 'none'
+        }}
         transition={{ duration: 0.5 }}
       />
 
-      {/* Island hillside - minimal curve */}
-      <motion.path
-        d="M50 155 Q100 140 150 145 Q200 135 250 145 L250 180 L50 180 Z"
-        animate={{ fill: isHovered ? 'hsl(45, 15%, 30%)' : 'hsl(0, 0%, 18%)' }}
-        transition={{ duration: 0.6 }}
-      />
-
-      {/* Cycladic houses - minimal cubes */}
+      {/* Stars (visible only when not hovered - night mode) */}
       {[
-        { x: 60, y: 138, w: 16, h: 12 },
-        { x: 80, y: 135, w: 14, h: 15 },
-        { x: 200, y: 140, w: 15, h: 11 },
-        { x: 220, y: 136, w: 14, h: 14 },
-      ].map((house, i) => (
-        <motion.rect
+        { x: 30, y: 25 }, { x: 80, y: 40 }, { x: 140, y: 20 },
+        { x: 45, y: 55 }, { x: 100, y: 60 }
+      ].map((star, i) => (
+        <motion.circle
           key={i}
-          x={house.x}
-          y={house.y}
-          width={house.w}
-          height={house.h}
-          animate={{ fill: isHovered ? 'hsl(45, 15%, 65%)' : 'hsl(0, 0%, 40%)' }}
-          transition={{ duration: 0.4, delay: i * 0.03 }}
+          cx={star.x}
+          cy={star.y}
+          r="1.5"
+          fill="white"
+          animate={{ opacity: isHovered ? 0 : 0.6 }}
+          transition={{ duration: 0.5 }}
         />
       ))}
 
-      {/* Windmill - elegant silhouette */}
+      {/* Sea */}
+      <motion.rect
+        x="0"
+        y="145"
+        width="300"
+        height="55"
+        fill="url(#seaGradientMyk)"
+      />
+
+      {/* Sea waves */}
+      {[0, 1, 2, 3].map((i) => (
+        <motion.path
+          key={i}
+          d={`M0 ${150 + i * 12} Q40 ${147 + i * 12} 80 ${150 + i * 12} Q120 ${153 + i * 12} 160 ${150 + i * 12} Q200 ${147 + i * 12} 240 ${150 + i * 12} Q280 ${153 + i * 12} 320 ${150 + i * 12}`}
+          fill="none"
+          stroke="white"
+          strokeWidth="0.8"
+          animate={{ 
+            opacity: isHovered ? 0.5 : 0.2,
+            x: [0, -20, 0]
+          }}
+          transition={{ 
+            x: { duration: 4 + i, repeat: Infinity, ease: "easeInOut" },
+            opacity: { duration: 0.5 }
+          }}
+        />
+      ))}
+
+      {/* Island hillside */}
+      <motion.path
+        d="M0 160 Q30 140 70 145 Q100 130 140 140 Q180 125 220 135 Q260 128 300 145 L300 200 L0 200 Z"
+        animate={{ fill: isHovered ? 'hsl(35, 40%, 70%)' : 'hsl(220, 15%, 35%)' }}
+        transition={{ duration: 0.5 }}
+      />
+
+      {/* White Cycladic Houses */}
+      {[
+        { x: 20, y: 130, w: 25, h: 20 },
+        { x: 50, y: 125, w: 20, h: 25 },
+        { x: 75, y: 128, w: 22, h: 22 },
+        { x: 200, y: 130, w: 24, h: 20 },
+        { x: 228, y: 126, w: 20, h: 24 },
+        { x: 255, y: 132, w: 25, h: 18 },
+      ].map((house, i) => (
+        <motion.g key={i}>
+          {/* House body */}
+          <motion.rect
+            x={house.x}
+            y={house.y}
+            width={house.w}
+            height={house.h}
+            animate={{ 
+              fill: isHovered ? 'hsl(0, 0%, 100%)' : 'hsl(220, 15%, 55%)',
+              filter: isHovered ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : 'none'
+            }}
+            transition={{ duration: 0.3, delay: i * 0.05 }}
+          />
+          {/* Blue door */}
+          <motion.rect
+            x={house.x + house.w / 2 - 3}
+            y={house.y + house.h - 8}
+            width="6"
+            height="8"
+            animate={{ fill: isHovered ? 'hsl(210, 80%, 50%)' : 'hsl(220, 30%, 40%)' }}
+            transition={{ duration: 0.3, delay: i * 0.05 }}
+          />
+          {/* Window */}
+          <motion.rect
+            x={house.x + 4}
+            y={house.y + 5}
+            width="5"
+            height="5"
+            animate={{ fill: isHovered ? 'hsl(210, 80%, 50%)' : 'hsl(220, 30%, 40%)' }}
+            transition={{ duration: 0.3, delay: i * 0.05 }}
+          />
+        </motion.g>
+      ))}
+
+      {/* Main Windmill */}
       <motion.g>
-        {/* Body - tapered */}
+        {/* Windmill base/body */}
         <motion.path
-          d="M138 80 L143 150 L167 150 L162 80 Z"
-          animate={{ fill: isHovered ? 'hsl(45, 18%, 68%)' : 'hsl(0, 0%, 45%)' }}
-          transition={{ duration: 0.5 }}
+          d="M135 75 L145 140 L175 140 L165 75 Z"
+          animate={{ 
+            fill: isHovered ? 'hsl(0, 0%, 100%)' : 'hsl(220, 15%, 60%)',
+            filter: isHovered ? 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' : 'none'
+          }}
+          transition={{ duration: 0.4 }}
         />
 
-        {/* Roof */}
+        {/* Windmill roof */}
         <motion.path
-          d="M135 82 L150 62 L165 82 Z"
-          animate={{ fill: isHovered ? 'hsl(45, 25%, 42%)' : 'hsl(0, 0%, 30%)' }}
-          transition={{ duration: 0.5 }}
+          d="M130 78 L150 55 L170 78 Z"
+          animate={{ 
+            fill: isHovered ? 'hsl(25, 50%, 45%)' : 'hsl(220, 20%, 40%)',
+            filter: isHovered ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' : 'none'
+          }}
+          transition={{ duration: 0.4 }}
         />
 
-        {/* Blades hub */}
+        {/* Windmill door */}
+        <motion.path
+          d="M152 140 L152 120 Q157 115 162 120 L162 140 Z"
+          animate={{ fill: isHovered ? 'hsl(25, 40%, 35%)' : 'hsl(220, 25%, 35%)' }}
+          transition={{ duration: 0.4 }}
+        />
+
+        {/* Windmill blades hub */}
         <motion.circle
           cx="150"
-          cy="75"
-          r="3"
-          animate={{ fill: isHovered ? 'hsl(45, 30%, 40%)' : 'hsl(0, 0%, 28%)' }}
-          transition={{ duration: 0.5 }}
+          cy="70"
+          r="5"
+          animate={{ fill: isHovered ? 'hsl(25, 40%, 40%)' : 'hsl(220, 20%, 45%)' }}
+          transition={{ duration: 0.4 }}
         />
 
-        {/* Elegant rotating blades - thin lines */}
+        {/* Rotating Blades */}
         <motion.g
           animate={{ rotate: isHovered ? 360 : 0 }}
-          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          style={{ transformOrigin: '150px 75px' }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          style={{ transformOrigin: '150px 70px' }}
         >
           {[0, 72, 144, 216, 288].map((angle, i) => (
-            <motion.line
-              key={i}
-              x1="150"
-              y1="75"
-              x2={150 + Math.cos((angle - 90) * Math.PI / 180) * 38}
-              y2={75 + Math.sin((angle - 90) * Math.PI / 180) * 38}
-              strokeWidth="1.5"
-              animate={{ stroke: isHovered ? 'hsl(45, 25%, 48%)' : 'hsl(0, 0%, 35%)' }}
-              transition={{ duration: 0.5 }}
-            />
+            <motion.g key={i} transform={`rotate(${angle} 150 70)`}>
+              {/* Blade arm */}
+              <motion.rect
+                x="148"
+                y="25"
+                width="4"
+                height="42"
+                animate={{ fill: isHovered ? 'hsl(25, 35%, 50%)' : 'hsl(220, 15%, 50%)' }}
+                transition={{ duration: 0.4 }}
+              />
+              {/* Blade sail */}
+              <motion.path
+                d="M152 27 L165 35 L165 55 L152 65 Z"
+                animate={{ 
+                  fill: isHovered ? 'hsl(40, 30%, 90%)' : 'hsl(220, 10%, 55%)',
+                  opacity: isHovered ? 0.9 : 0.7
+                }}
+                transition={{ duration: 0.4 }}
+              />
+            </motion.g>
           ))}
         </motion.g>
       </motion.g>
 
-      {/* Small church dome - minimal */}
+      {/* Small church dome */}
       <motion.g>
         <motion.rect
-          x="105" y="128" width="12" height="12"
-          animate={{ fill: isHovered ? 'hsl(45, 15%, 65%)' : 'hsl(0, 0%, 40%)' }}
-          transition={{ duration: 0.5 }}
+          x="100"
+          y="115"
+          width="18"
+          height="20"
+          animate={{ fill: isHovered ? 'hsl(0, 0%, 100%)' : 'hsl(220, 15%, 55%)' }}
+          transition={{ duration: 0.4 }}
         />
         <motion.ellipse
-          cx="111" cy="128" rx="6" ry="4"
-          animate={{ fill: isHovered ? 'hsl(45, 20%, 50%)' : 'hsl(0, 0%, 32%)' }}
-          transition={{ duration: 0.5 }}
+          cx="109"
+          cy="115"
+          rx="9"
+          ry="7"
+          animate={{ 
+            fill: isHovered ? 'hsl(210, 80%, 50%)' : 'hsl(220, 30%, 45%)',
+            filter: isHovered ? 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' : 'none'
+          }}
+          transition={{ duration: 0.4 }}
         />
         {/* Cross */}
-        <motion.line
-          x1="111" y1="119" x2="111" y2="125"
-          strokeWidth="1"
-          animate={{ stroke: isHovered ? 'hsl(45, 50%, 55%)' : 'hsl(0, 0%, 40%)' }}
-          transition={{ duration: 0.5 }}
-        />
-        <motion.line
-          x1="108" y1="121" x2="114" y2="121"
-          strokeWidth="1"
-          animate={{ stroke: isHovered ? 'hsl(45, 50%, 55%)' : 'hsl(0, 0%, 40%)' }}
-          transition={{ duration: 0.5 }}
-        />
+        <motion.g>
+          <motion.rect
+            x="108"
+            y="103"
+            width="2"
+            height="8"
+            animate={{ fill: isHovered ? 'hsl(45, 80%, 50%)' : 'hsl(220, 20%, 50%)' }}
+            transition={{ duration: 0.4 }}
+          />
+          <motion.rect
+            x="105"
+            y="105"
+            width="8"
+            height="2"
+            animate={{ fill: isHovered ? 'hsl(45, 80%, 50%)' : 'hsl(220, 20%, 50%)' }}
+            transition={{ duration: 0.4 }}
+          />
+        </motion.g>
       </motion.g>
+
+      {/* Pelican (Petros!) */}
+      {isHovered && (
+        <motion.g
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        >
+          {/* Body */}
+          <ellipse cx="45" cy="148" rx="12" ry="8" fill="hsl(0, 0%, 100%)" />
+          {/* Head */}
+          <circle cx="55" cy="140" r="5" fill="hsl(0, 0%, 100%)" />
+          {/* Beak */}
+          <path d="M58 140 L72 143 L58 146 Z" fill="hsl(35, 80%, 55%)" />
+          {/* Eye */}
+          <circle cx="56" cy="139" r="1" fill="black" />
+        </motion.g>
+      )}
+
+      {/* Bougainvillea flowers */}
+      {isHovered && (
+        <motion.g
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {[
+            { x: 45, y: 123 }, { x: 48, y: 120 }, { x: 52, y: 122 },
+            { x: 230, y: 124 }, { x: 234, y: 121 }, { x: 238, y: 125 }
+          ].map((flower, i) => (
+            <circle
+              key={i}
+              cx={flower.x}
+              cy={flower.y}
+              r="3"
+              fill="hsl(330, 80%, 55%)"
+            />
+          ))}
+        </motion.g>
+      )}
+
+      {/* Sun reflection on water */}
+      {isHovered && (
+        <motion.ellipse
+          cx="250"
+          cy="165"
+          rx="25"
+          ry="10"
+          fill="hsl(45, 100%, 70%)"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.4 }}
+          transition={{ duration: 0.5 }}
+        />
+      )}
     </motion.svg>
   );
 };
