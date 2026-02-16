@@ -20,7 +20,7 @@ class Order(Base):
 
     #RELATIONSHIPS
     owner = relationship("User", back_populates="orders")
-    orderitems = relationship("OrderItem", back_populates="order")
+    order_items = relationship("OrderItem", back_populates="order")
 
 
 class OrderItem(Base):

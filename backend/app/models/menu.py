@@ -12,7 +12,7 @@ class Item(Base):
     price = Column(Float, nullable=False)
     description = Column(String)
     photoUrl = Column(String)
-    is_active = Column(Boolean)
+    is_active = Column(Boolean, default=True)
     category = Column(String, index=True)
 
     #RELATIONSHIPS
@@ -25,7 +25,7 @@ class BundleItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     bundle_id = Column(Integer, ForeignKey("bundles.id"), nullable=False)
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
-    def_quality = Column(Integer, nullable=False)
+    def_quality = Column(Integer, nullable=False, default=1)
 
     #RELATIONSHIPS
     inbundle = relationship("Bundle", back_populates="items_in_bundle")
@@ -38,8 +38,8 @@ class Bundle(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False, index=True)
     description =  Column(String)
-    price = Column(Float)
-    is_active = Column(Boolean)
+    price = Column(Float, nullable=False)
+    is_active = Column(Boolean, default=True)
     photoUrl = Column(String)
 
     #RELATIONSHIPS
