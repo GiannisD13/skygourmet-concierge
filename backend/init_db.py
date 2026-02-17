@@ -5,13 +5,13 @@ from app.models.menu import Item, Bundle, BundleItem
 from app.models.order import Order, OrderItem
 
 def create_tables():
-    print("⏳ Ξεκινάει η δημιουργία των πινάκων στη βάση...")
+    print(" Ξεκινάει η δημιουργία των πινάκων στη βάση...")
     try:
         # Αυτή η εντολή δημιουργεί ό,τι λείπει από τη βάση
         Base.metadata.create_all(bind=engine)
-        print("✅ Οι πίνακες δημιουργήθηκαν με επιτυχία!")
+        print(" Οι πίνακες δημιουργήθηκαν με επιτυχία!")
     except Exception as e:
-        print(f"❌ Κάτι πήγε στραβά: {e}")
+        print(f" Κάτι πήγε στραβά: {e}")
 
 if __name__ == "__main__":
     create_tables()
