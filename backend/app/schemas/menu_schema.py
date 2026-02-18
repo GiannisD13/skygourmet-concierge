@@ -45,6 +45,13 @@ class BundleItem(BundleItemBase):
     class Config:
         from_attributes = True
 
+class BundleItemAdd(BaseModel):
+    item_id: int
+    def_quality: int = Field(default=1, ge=1)
+    
+class BundleItemQuantityUpdate(BaseModel):
+    def_quality: int = Field(..., ge=1)
+
 
 # ============ BUNDLE SCHEMAS ============
 class BundleBase(BaseModel):
