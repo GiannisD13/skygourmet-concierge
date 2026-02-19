@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from app.models import menu as models
 from app.schemas import menu_schema as schemas
 from typing import List, Optional
@@ -9,8 +10,9 @@ def get_item(db: Session, item_id: int):
 def search_item(db:Session, query:str, skip: int = 0, limit: int = 100):
     return db.query(models.Item).filter(
         models.Item.is_active==True,
-         (models.Item.name.ilike(f"%{query}%") | 
-         models.Item.description.ilike(f"%{query}%"))
+        or_(models.Item.name.ilike(f"%{query}%"),
+         models.Item.description.ilike(f"%{query}%")
+        )
     ).offset(skip).limit(limit).all()
     
 
