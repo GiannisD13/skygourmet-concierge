@@ -15,7 +15,7 @@ class Order(Base):
     passenger_count = Column(Integer, default=1)
     flight_date = Column(DateTime)
     total_amount = Column(Float, default=0.0)
-    status = Column(String, default="pending")  # pending, confirmed, delivered, cancelled
+    status = Column(String, default="pending")  # draft, pending, confirmed, delivered, cancelled
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     #RELATIONSHIPS
@@ -29,9 +29,11 @@ class OrderItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
+    bundle_id = Column(Integer, ForeignKey("bundles.id"), nullable=True)  # ← ΝΕΟ
     quantity = Column(Integer, nullable=False)
     unit_price = Column(Float, nullable=False)
 
     #RELATIONSHIPS
     order = relationship("Order", back_populates="order_items")
     item = relationship("Item")
+    bundle = relationship("Bundle")
