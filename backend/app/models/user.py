@@ -8,6 +8,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    is_admin = Column(Boolean, nullable=False, default=False)
     phone = Column(String, unique=True, index=True, nullable=False)
     full_name = Column(String, nullable=False)
     email = Column(String, nullable=False)

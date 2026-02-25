@@ -21,6 +21,7 @@ class UserUpdate(BaseModel):
 # EVERYTHING(FOR RESPONSES)
 class User(UserBase):
     id: str
+    is_admin: bool
     created_at: datetime
 
     class Config:

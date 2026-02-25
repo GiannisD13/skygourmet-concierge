@@ -66,6 +66,18 @@ def delete_user(db: Session, user_id: str) -> bool:
     return False
 
 
+def get_admins(db: Session) -> List[users.User]:
+    return db.query(users.User).filter(users.User.is_admin == True).all()
+
+def set_admin(db: Session, user_id: str, is_admin: bool) -> Optional[users.User]:
+    db_user = db.query(users.User).filter(users.User.id == user_id).first()
+    if not db_user:
+        return None
+    db_user.is_admin = is_admin
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
 def find_or_create_user(
     db: Session, phone: str, email: str, full_name: str
 ) -> Tuple[users.User, bool]:
