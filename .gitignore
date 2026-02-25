@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 .env
+order_flow.md
 CLAUDE.md
 venv/
 __pycache__/

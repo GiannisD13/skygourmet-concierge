@@ -12,7 +12,7 @@ env_path = Path(__file__).parent.parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
 database_url = os.getenv("DATABASE_URL")
 if(database_url is None):
-    ValueError("Url not found in env variables file.")
+   raise ValueError("Url not found in env variables file.")
 engine = create_engine(database_url, echo=True)
 #CREATING SESSION
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
