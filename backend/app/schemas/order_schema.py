@@ -61,6 +61,7 @@ class CheckoutCreate(BaseModel):
     full_name: str = Field(..., min_length=1, max_length=100)
     email: EmailStr
     phone: str = Field(..., min_length=10, max_length=15)
+    password: str = Field(..., min_length=8)
     tail_number: str = Field(..., min_length=1, max_length=20)
     passenger_count: int = Field(..., ge=1, le=50)
     flight_date: datetime

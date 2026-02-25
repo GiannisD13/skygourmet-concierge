@@ -10,7 +10,7 @@ class UserBase(BaseModel):
 
 # NO ID NO CREATED AT
 class UserCreate(UserBase):
-    pass
+    password: str = Field(..., min_length=8)
 
 # ALL OPTIONAL
 class UserUpdate(BaseModel):

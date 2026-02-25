@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from app.models import user as users
 from app.schemas import user_schema as schemas
+from app.core.security import hash_password, verify_password
 from typing import List, Optional, Tuple
 
 def get_user(db:Session, user_id:str):
@@ -25,8 +26,10 @@ def create_user(db:Session, newuser:schemas.UserCreate):
     existing_email = get_user_by_email(db, newuser.email)
     if existing_email:
         raise ValueError(f"User with email '{newuser.email}' already exists")
+    data = newuser.model_dump(exclude={"password"})
     db_user = users.User(
-        **newuser.model_dump()
+        **data,
+        hashed_password=hash_password(newuser.password),
     )
     db.add(db_user)
     db.commit()
@@ -66,6 +69,15 @@ def delete_user(db: Session, user_id: str) -> bool:
     return False
 
 
+def authenticate_user(db: Session, email: str, password: str) -> Optional[users.User]:
+    user = get_user_by_email(db, email)
+    if not user:
+        return None
+    if not verify_password(password, user.hashed_password):
+        return None
+    return user
+
+
 def get_admins(db: Session) -> List[users.User]:
     return db.query(users.User).filter(users.User.is_admin == True).all()
 
@@ -79,7 +91,7 @@ def set_admin(db: Session, user_id: str, is_admin: bool) -> Optional[users.User]
     return db_user
 
 def find_or_create_user(
-    db: Session, phone: str, email: str, full_name: str
+    db: Session, phone: str, email: str, full_name: str, password: str
 ) -> Tuple[users.User, bool]:
     user = db.query(users.User).filter(
         or_(users.User.phone == phone, users.User.email == email)
@@ -87,7 +99,12 @@ def find_or_create_user(
     if user:
         return user, False
 
-    db_user = users.User(phone=phone, email=email, full_name=full_name)
+    db_user = users.User(
+        phone=phone,
+        email=email,
+        full_name=full_name,
+        hashed_password=hash_password(password),
+    )
     db.add(db_user)
     db.flush()
     return db_user, True

@@ -107,6 +107,7 @@ def create_order_from_checkout(
                 phone=checkout_data.phone,
                 email=checkout_data.email,
                 full_name=checkout_data.full_name,
+                password=checkout_data.password,
             )
 
         db_order = Order(
