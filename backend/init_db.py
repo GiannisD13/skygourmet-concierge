@@ -4,6 +4,7 @@ from app.models.user import User
 from app.models.menu import Item, Bundle, BundleItem
 from app.models.order import Order, OrderItem
 
+#ΔΕΝ ΧΡΕΙΑΖΕΤΑΙ ΠΛΕΟΝ ΜΕΤΑ ΤΗ ΠΡΟΣΘΗΚΗ ΤΟΥ ALEMBIC
 def create_tables():
     print(" Ξεκινάει η δημιουργία των πινάκων στη βάση...")
     try:
