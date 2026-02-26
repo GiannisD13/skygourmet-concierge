@@ -27,7 +27,7 @@ class CheckoutResponse(BaseModel):
     token_type: str = "bearer"
     is_new_user: bool
 
-
+#ΔΗΜΙΟΥΡΓΙΑ ΠΑΡΑΓΓΕΛΙΑΣ+ΧΡΗΣΤΗ ΚΑΙ ΕΚΔΟΣΗ TOKEN
 @router.post("/checkout", response_model=CheckoutResponse, status_code=status.HTTP_201_CREATED)
 def checkout(data: CheckoutCreate, db: Session = Depends(get_db)):
     """Guest ή logged-out user: δημιουργεί account + order σε ένα βήμα."""
