@@ -27,7 +27,7 @@ def get_db() -> Generator:
 #ΒΡΙΣΚΕΙ ΤΟ TOKEN ΣΤΟ REQUEST
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
-#ΕΠΙΣΤΡΕΦΕΙ ΤΟΝ ΧΡΗΣΤΗ ΜΕΣΩ ΤΟΥ TOKEN
+#ΕΠΙΣΤΡΕΦΕΙ ΤΟΝ ΧΡΗΣΤΗ ΜΕΣΩ ΤΟΥ TOKEN AN ΠΑΕΙ ΚΑΛΑ ΤΟ DECODE ΑΛΛΙΩΣ ΠΕΤΑΕΙ EXCEPTION
 def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),

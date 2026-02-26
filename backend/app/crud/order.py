@@ -92,7 +92,7 @@ def create_order_from_checkout(
 ) -> Tuple[Order, User, bool]:
     if not checkout_data.bundles and not checkout_data.custom_items:
         raise ValueError("Order must contain at least one bundle or custom item")
-    if checkout_data.flight_date < dt.datetime.utcnow():
+    if checkout_data.flight_date < dt.datetime.now(dt.timezone.utc):
         raise ValueError("Flight date must be in the future")
 
     try:
@@ -297,7 +297,7 @@ def update_order_details(
         order.tail_number = tail_number.strip()
 
     if flight_date is not None:
-        if flight_date < dt.datetime.utcnow():
+        if flight_date < dt.datetime.now(dt.timezone.utc):
             raise ValueError("Flight date must be in the future")
         order.flight_date = flight_date
 
