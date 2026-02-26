@@ -1,15 +1,19 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
-import CheckoutForm from '@/components/checkout/CheckoutForm';
+import GuestCheckoutForm from '@/components/checkout/GuestCheckoutForm';
+import AuthCheckoutForm from '@/components/checkout/AuthCheckoutForm';
+import OrderSummary from '@/components/checkout/OrderSummary';
 import { useOrder } from '@/context/OrderContext';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { selectedAirport, selectedMenu } = useOrder();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!selectedAirport || !selectedMenu) {
@@ -24,28 +28,21 @@ const Checkout = () => {
       <Header />
 
       <main className="pt-24 pb-16">
-        <div className="container-luxury section-padding max-w-3xl">
-          {/* Back Button & Location */}
+        <div className="container-luxury section-padding">
+          {/* Back Button */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8"
+            className="mb-8"
           >
             <Button
               variant="ghost"
               onClick={() => navigate('/menu')}
-              className="flex items-center gap-2 self-start"
+              className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Menu
             </Button>
-
-            <div className="flex items-center gap-3 px-4 py-2 bg-secondary rounded-full">
-              <MapPin className="w-4 h-4 text-accent" />
-              <span className="font-sans text-sm">
-                {selectedAirport.city} • {selectedMenu.name}
-              </span>
-            </div>
           </motion.div>
 
           {/* Header */}
@@ -59,11 +56,23 @@ const Checkout = () => {
               Complete Your Order
             </h1>
             <p className="font-sans text-muted-foreground">
-              Enter your flight details to finalize your catering reservation.
+              {isAuthenticated
+                ? 'Enter your flight details to finalize your catering reservation.'
+                : 'Create an account and enter your flight details to place your order.'}
             </p>
           </motion.div>
 
-          <CheckoutForm />
+          {/* Two-column layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <div className="lg:col-span-2">
+              {isAuthenticated ? <AuthCheckoutForm /> : <GuestCheckoutForm />}
+            </div>
+            <div className="lg:col-span-1">
+              <div className="lg:sticky lg:top-28">
+                <OrderSummary />
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
