@@ -19,6 +19,7 @@ interface AuthContextType {
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  setTokenAndFetchUser: (token: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -66,6 +67,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     navigate('/', { replace: true });
   };
 
+  const setTokenAndFetchUser = async (newToken: string) => {
+    localStorage.setItem('auth_token', newToken);
+    setToken(newToken);
+    try {
+      const userData = await api.get<User>('/api/v1/users/me');
+      setUser(userData);
+    } catch {
+      clearAuth();
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -76,6 +88,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isAdmin: !!user?.is_admin,
         login,
         logout,
+        setTokenAndFetchUser,
       }}
     >
       {children}
