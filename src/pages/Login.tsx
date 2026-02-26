@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Plane, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,6 +15,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loginAttempted, setLoginAttempted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,27 +24,22 @@ const Login = () => {
 
     try {
       await login(email, password);
+      setLoginAttempted(true);
     } catch {
       setError('Invalid email or password');
       setIsSubmitting(false);
+      setLoginAttempted(false);
       return;
     }
-
-    // login sets token, user will be fetched async — we need to wait for it
-    // Small delay to let the user state populate
-    setTimeout(() => {
-      setIsSubmitting(false);
-    }, 500);
   };
 
-  // Redirect once user is loaded after login
-  if (user) {
-    if (user.is_admin) {
-      navigate('/admin', { replace: true });
-    } else {
-      navigate('/menu', { replace: true });
+  useEffect(() => {
+    if (loginAttempted && user) {
+      setIsSubmitting(false);
+      setLoginAttempted(false);
+      navigate(user.is_admin ? '/admin' : '/menu', { replace: true });
     }
-  }
+  }, [loginAttempted, user, navigate]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6">
