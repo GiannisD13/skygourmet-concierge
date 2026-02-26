@@ -1,73 +1,83 @@
-# Welcome to your Lovable project
+# Website for vip jet catering service using top notch technologies.
+The goal of this project was to build a production-ready API that handles complex business logic with high performance.
+## Backend Architecture & Features
+Technology Stack
+Framework: FastAPI (Python 3.10+)
 
-## Project info
+Database: PostgreSQL (Relational Data Modeling)
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+ORM: SQLAlchemy (Object-Relational Mapping)
 
-## How can I edit this code?
+Security: JWT (JSON Web Tokens) & Passlib (bcrypt)
 
-There are several ways of editing your application.
+Validation: Pydantic (Data Schemas & Type Hinting)
 
-**Use Lovable**
+Frontend: React + Vite (Fully integrated via RESTful API)-built mostly with the help of ai tools
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Implemented a stateless OAuth2 authentication flow using JWT.
 
-Changes made via Lovable will be committed automatically to this repo.
+# Relational Database Design
+A structured PostgreSQL schema designed for consistency and speed:
+Users & Profiles: Secure management of client data.
+Menu & Bundles: Complex relationships between menu items and curated meal packages.
+Order Management: Real-time tracking and relational mapping of user requests.
 
-**Use your preferred IDE**
+# Modular Router Pattern
+The API is built with a clean, layered architecture for maintainability:
+app/api/v1/: Versioned endpoints for Auth, Menu, and Orders.
+app/crud/: Decoupled business logic from database operations.
+app/models/: SQLAlchemy models for DB structure.
+app/schemas/: Pydantic models for request/response validation.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+ Running Locally Instructions                                                                                                                                                                                                                                                                                                          
+  Prerequisites                                                                                                                                               
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+  - Node.js (v18+) & npm
+  - Python 3.11+
+  - PostgreSQL running on localhost:5432
 
-Follow these steps:
+  ---
+  Backend
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+  # 1. Create and activate a virtual environment
+  cd backend
+  python -m venv venv
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+  # Windows
+  venv\Scripts\activate
+  # macOS/Linux
+  source venv/bin/activate
 
-# Step 3: Install the necessary dependencies.
-npm i
+  # 2. Install dependencies
+  pip install -r requirements.txt
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+  # 3. Create the .env file (copy the example below and fill in your values)
 
-**Edit a file directly in GitHub**
+  Create backend/.env:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+  DATABASE_URL=postgresql+psycopg2://<user>:<password>@localhost:5432/sky_gourmet
+  SECRET_KEY=your-long-random-secret-key
+  ALGORITHM=HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES=60
 
-**Use GitHub Codespaces**
+  # 4. Create the database tables
+  python init_db.py
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+  # 5. Create the first admin user
+  python create_admin.py
 
-## What technologies are used for this project?
+  # 6. Start the server
+  python -m uvicorn app.main:app --reload
 
-This project is built with:
+  API runs at http://127.0.0.1:8000 — Swagger UI at http://127.0.0.1:8000/docs
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+  ---
+  Frontend
 
-## How can I deploy this project?
+  # From the project root
+  npm install
+  npm run dev
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+  Frontend runs at http://localhost:8080
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+  ---
