@@ -1,10 +1,20 @@
 import { motion } from 'framer-motion';
-import { Plane, Phone } from 'lucide-react';
+import { Plane, Phone, LogIn, User, ChevronDown, ShieldCheck } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 const Header = () => {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const { isAuthenticated, isAdmin, user, logout } = useAuth();
 
   return (
     <motion.header
@@ -31,13 +41,57 @@ const Header = () => {
             </div>
           </Link>
 
-          <a
-            href="tel:+302101234567"
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors"
-          >
-            <Phone className="w-4 h-4" />
-            <span className="hidden md:inline font-sans">+30 210 123 4567</span>
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="tel:+302101234567"
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors"
+            >
+              <Phone className="w-4 h-4" />
+              <span className="hidden md:inline font-sans">+30 210 123 4567</span>
+            </a>
+
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center gap-2 font-sans text-sm">
+                    <User className="w-4 h-4" />
+                    <span className="hidden md:inline">{user?.full_name}</span>
+                    <ChevronDown className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin" className="flex items-center gap-2">
+                          <ShieldCheck className="w-4 h-4" />
+                          Admin Panel
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem asChild>
+                    <Link to="/orders">My Orders</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile">My Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout} className="text-destructive">
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/login">
+                <Button variant="ghost" className="flex items-center gap-2 font-sans text-sm">
+                  <LogIn className="w-4 h-4" />
+                  <span className="hidden md:inline">Login</span>
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </motion.header>
