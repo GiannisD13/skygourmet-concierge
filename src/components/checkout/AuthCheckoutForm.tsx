@@ -51,20 +51,16 @@ const AuthCheckoutForm = () => {
 
     try {
       // 1. Create draft
-      const draft = await api.post<{ id: number }>('/api/v1/orders/draft', {
-        tail_number: tailNumber,
-        passenger_count: passengerCount,
-        flight_date: combinedDate.toISOString(),
-      });
+      const draft = await api.post<{ id: number }>('/api/v1/orders/draft');
 
       // 2. Add bundle
-      const bundleId = selectedMenu ? parseInt(selectedMenu.id, 10) : undefined;
-      if (bundleId && !isNaN(bundleId)) {
+      const bundleId = selectedMenu?.bundleId;
+      if (bundleId) {
         await api.post(`/api/v1/orders/draft/bundles/${bundleId}`);
       }
 
       // 3. Update details
-      await api.put('/api/v1/orders/draft/details', {
+      await api.patch('/api/v1/orders/draft/details', {
         tail_number: tailNumber,
         passenger_count: passengerCount,
         flight_date: combinedDate.toISOString(),

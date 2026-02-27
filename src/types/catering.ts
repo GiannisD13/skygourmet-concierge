@@ -15,6 +15,7 @@ export interface MenuItem {
 
 export interface MenuTier {
   id: string;
+  bundleId?: number;
   name: string;
   subtitle: string;
   description: string;

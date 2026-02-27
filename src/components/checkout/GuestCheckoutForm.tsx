@@ -60,6 +60,10 @@ const GuestCheckoutForm = () => {
       setError('Phone must be at least 10 characters');
       return;
     }
+    if (form.password.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
     if (!flightDate) {
       setError('Please select a flight date');
       return;
@@ -79,7 +83,7 @@ const GuestCheckoutForm = () => {
     setIsSubmitting(true);
 
     try {
-      const bundleId = selectedMenu ? parseInt(selectedMenu.id, 10) : undefined;
+      const bundleId = selectedMenu?.bundleId;
       const body = {
         full_name: form.full_name,
         email: form.email,
@@ -88,7 +92,7 @@ const GuestCheckoutForm = () => {
         tail_number: form.tail_number,
         passenger_count: form.passenger_count,
         flight_date: combinedDate.toISOString(),
-        bundles: bundleId && !isNaN(bundleId) ? [bundleId] : [],
+        bundles: bundleId ? [bundleId] : [],
         custom_items: [],
       };
 

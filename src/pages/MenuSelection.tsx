@@ -9,18 +9,57 @@ import { menuTiers } from '@/data/menus';
 import { useOrder } from '@/context/OrderContext';
 import { MenuTier } from '@/types/catering';
 import { Button } from '@/components/ui/button';
+import { api } from '@/lib/api';
+
+interface BackendBundle {
+  id: number;
+  name: string;
+  description: string | null;
+  price: number;
+  photoUrl: string | null;
+  is_active: boolean;
+  items_in_bundle: { item_id: number; def_quality: number; item: { id: number; name: string; description: string | null } }[];
+}
+
+const bundleToMenuTier = (bundle: BackendBundle): MenuTier => ({
+  id: String(bundle.id),
+  bundleId: bundle.id,
+  name: bundle.name,
+  subtitle: 'Curated Experience',
+  description: bundle.description || '',
+  price: bundle.price,
+  image: bundle.photoUrl || menuTiers[0]?.image || '',
+  items: bundle.items_in_bundle.map(bi => ({
+    id: String(bi.item_id),
+    name: bi.item.name,
+    description: bi.item.description || '',
+    items: [],
+  })),
+});
 
 const MenuSelection = () => {
   const navigate = useNavigate();
   const { selectedAirport, setSelectedMenu } = useOrder();
   const [detailMenu, setDetailMenu] = useState<MenuTier | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [menus, setMenus] = useState<MenuTier[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!selectedAirport) {
       navigate('/');
     }
   }, [selectedAirport, navigate]);
+
+  useEffect(() => {
+    api.get<BackendBundle[]>('/api/v1/menu/bundles')
+      .then(bundles => {
+        const active = bundles.filter(b => b.is_active);
+        setMenus(active.length > 0 ? active.map(bundleToMenuTier) : menuTiers);
+      })
+      .catch(() => setMenus(menuTiers))
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const handleSelectMenu = (menu: MenuTier) => {
     setSelectedMenu(menu);
@@ -83,17 +122,25 @@ const MenuSelection = () => {
           </motion.div>
 
           {/* Menu Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {menuTiers.map((menu, index) => (
-              <MenuCard
-                key={menu.id}
-                menu={menu}
-                index={index}
-                onSelect={handleSelectMenu}
-                onViewDetails={handleViewDetails}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {[0, 1, 2].map(i => (
+                <div key={i} className="card-luxury bg-card h-96 animate-pulse rounded-lg" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {menus.map((menu, index) => (
+                <MenuCard
+                  key={menu.id}
+                  menu={menu}
+                  index={index}
+                  onSelect={handleSelectMenu}
+                  onViewDetails={handleViewDetails}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
 
