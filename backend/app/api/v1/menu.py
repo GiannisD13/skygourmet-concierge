@@ -4,7 +4,7 @@ from typing import List
 
 from app.api.deps import get_db, require_admin
 from app.crud import menu as crud
-from app.schemas.menu_schema import Item, ItemCreate, ItemUpdate, Bundle, BundleCreate, BundleUpdate
+from app.schemas.menu_schema import Item, ItemCreate, ItemUpdate, Bundle, BundleCreate, BundleUpdate, BundleItem, BundleItemAdd
 
 router = APIRouter()
 
@@ -90,3 +90,20 @@ def delete_bundle(bundle_id: int, db: Session = Depends(get_db)):
     if not crud.delete_bundle(db, bundle_id):
         raise HTTPException(status_code=404, detail="Bundle not found")
     return {"detail": "Bundle deactivated"}
+
+
+# ── BUNDLE ITEMS (admin only) ──────────────────────────────────────────────────
+
+@router.post("/bundles/{bundle_id}/items", response_model=BundleItem, dependencies=[Depends(require_admin)])
+def add_item_to_bundle(bundle_id: int, data: BundleItemAdd, db: Session = Depends(get_db)):
+    try:
+        return crud.add_item_to_bundle(db, bundle_id, data.item_id, data.def_quality)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.delete("/bundles/{bundle_id}/items/{item_id}", dependencies=[Depends(require_admin)])
+def remove_item_from_bundle(bundle_id: int, item_id: int, db: Session = Depends(get_db)):
+    if not crud.remove_item_from_bundle(db, bundle_id, item_id):
+        raise HTTPException(status_code=404, detail="Item not found in bundle")
+    return {"detail": "Item removed from bundle"}
