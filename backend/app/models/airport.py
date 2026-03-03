@@ -20,7 +20,7 @@ class AirportItem(Base):
     __tablename__ = "airport_items"
 
     id = Column(Integer, primary_key=True, index=True)
-    airport_id = Column(Integer, ForeignKey="airports.id", nullable=False)
+    airport_id = Column(Integer, ForeignKey("airports.id"), nullable=False)
     item_id = Column(Integer, ForeignKey("items.id"), nullable=False)
 
     #RELATIONSHIPS
@@ -28,9 +28,9 @@ class AirportItem(Base):
     item = relationship("Item", back_populates="airports")
 
 class AirportBundle(Base):
-     __tablename__ = "airport_bundles"
-     id = Column(Integer, primary_key=True, index=True)
-     airport_id = Column(Integer, ForeignKey("airports.id"), nullable=False)
-     bundle_id = Column(Integer, ForeignKey("bundles.id"), nullable=False)
-     airport = relationship("Airport", back_populates="airport_bundles")
-     bundle = relationship("Bundle", back_populates="airports")
+    __tablename__ = "airport_bundles"
+    id = Column(Integer, primary_key=True, index=True)
+    airport_id = Column(Integer, ForeignKey("airports.id"), nullable=False)
+    bundle_id = Column(Integer, ForeignKey("bundles.id"), nullable=False)
+    airport = relationship("Airport", back_populates="airport_bundles")
+    bundle = relationship("Bundle", back_populates="airports")

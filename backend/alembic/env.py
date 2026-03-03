@@ -24,6 +24,7 @@ from app.core.database import Base
 from app.models.user import User
 from app.models.menu import Item, Bundle, BundleItem
 from app.models.order import Order, OrderItem
+from app.models.airport import Airport, AirportItem, AirportBundle
 
 target_metadata = Base.metadata
 
