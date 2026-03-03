@@ -17,8 +17,8 @@ class ApiClient {
     return headers;
   }
 
-  private async handleResponse<T>(response: Response): Promise<T> {
-    if (response.status === 401) {
+  private async handleResponse<T>(response: Response, isAuthEndpoint = false): Promise<T> {
+    if (response.status === 401 && !isAuthEndpoint) {
       localStorage.removeItem('auth_token');
       window.location.href = '/login';
       throw new Error('Unauthorized');
@@ -53,7 +53,7 @@ class ApiClient {
       headers: this.getHeaders(true),
       body: formData,
     });
-    return this.handleResponse<T>(response);
+    return this.handleResponse<T>(response, true);
   }
 
   async put<T>(path: string, body?: unknown): Promise<T> {

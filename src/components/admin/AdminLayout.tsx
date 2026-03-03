@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { UtensilsCrossed, Package, Users } from 'lucide-react';
+import { UtensilsCrossed, Package, Users, Plane } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import {
   Sidebar,
@@ -16,9 +16,10 @@ import {
 } from '@/components/ui/sidebar';
 
 const navItems = [
-  { title: 'Menu Items', url: '/admin/items', icon: UtensilsCrossed },
-  { title: 'Bundles', url: '/admin/bundles', icon: Package },
-  { title: 'Users', url: '/admin/users', icon: Users },
+  { title: 'Menu Items', url: '/admin/items',    icon: UtensilsCrossed },
+  { title: 'Bundles',    url: '/admin/bundles',  icon: Package },
+  { title: 'Airports',   url: '/admin/airports', icon: Plane },
+  { title: 'Users',      url: '/admin/users',    icon: Users },
 ];
 
 function AdminSidebar() {

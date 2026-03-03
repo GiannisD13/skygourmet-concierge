@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import AdminItems from "./pages/admin/AdminItems";
 import AdminBundles from "./pages/admin/AdminBundles";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminAirports from "./pages/admin/AdminAirports";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
                 <Route path="items" element={<AdminItems />} />
                 <Route path="bundles" element={<AdminBundles />} />
                 <Route path="users" element={<AdminUsers />} />
+                <Route path="airports" element={<AdminAirports />} />
               </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

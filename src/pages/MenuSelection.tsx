@@ -52,14 +52,17 @@ const MenuSelection = () => {
   }, [selectedAirport, navigate]);
 
   useEffect(() => {
-    api.get<BackendBundle[]>('/api/v1/menu/bundles')
+    if (!selectedAirport) return;
+    const url = selectedAirport.id
+      ? `/api/v1/airports/${selectedAirport.id}/bundles`
+      : '/api/v1/menu/bundles';
+    api.get<BackendBundle[]>(url)
       .then(bundles => {
-        const active = bundles.filter(b => b.is_active);
-        setMenus(active.length > 0 ? active.map(bundleToMenuTier) : menuTiers);
+        setMenus(bundles.filter(b => b.is_active).map(bundleToMenuTier));
       })
       .catch(() => setMenus(menuTiers))
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [selectedAirport]);
 
   const handleSelectMenu = (menu: MenuTier) => {
     setSelectedMenu(menu);
@@ -127,6 +130,14 @@ const MenuSelection = () => {
               {[0, 1, 2].map(i => (
                 <div key={i} className="card-luxury bg-card h-96 animate-pulse rounded-lg" />
               ))}
+            </div>
+          ) : menus.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="font-serif text-2xl text-foreground mb-3">No menus available</p>
+              <p className="font-sans text-muted-foreground">
+                There are no catering options configured for {selectedAirport.city} yet.
+                Please contact us directly.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
