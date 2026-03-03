@@ -13,16 +13,16 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Pencil, Trash2, X, Loader2 } from 'lucide-react';
 
-interface BundleItem { item_id: number; item_name?: string; def_quality: number; }
-interface Bundle { id: number; name: string; description?: string; price: number; photo_url?: string; is_active: boolean; items: BundleItem[]; }
+interface BundleItem { item_id: number; item?: { id: number; name: string }; def_quality: number; }
+interface Bundle { id: number; name: string; description?: string; price: number; photoUrl?: string; is_active: boolean; items_in_bundle: BundleItem[]; }
 interface MenuItem { id: number; name: string; category: string; is_active: boolean; }
 
 interface BundleForm {
-  name: string; description: string; price: string; photo_url: string; is_active: boolean;
+  name: string; description: string; price: string; photoUrl: string; is_active: boolean;
   items: { item_id: number; item_name: string; def_quality: number }[];
 }
 
-const emptyForm: BundleForm = { name: '', description: '', price: '', photo_url: '', is_active: true, items: [] };
+const emptyForm: BundleForm = { name: '', description: '', price: '', photoUrl: '', is_active: true, items: [] };
 
 export default function AdminBundles() {
   const { toast } = useToast();
@@ -63,8 +63,12 @@ export default function AdminBundles() {
     setEditingBundle(b);
     setForm({
       name: b.name, description: b.description || '', price: String(b.price),
-      photo_url: b.photo_url || '', is_active: b.is_active,
-      items: b.items.map(i => ({ item_id: i.item_id, item_name: i.item_name || `Item #${i.item_id}`, def_quality: i.def_quality })),
+      photoUrl: b.photoUrl || '', is_active: b.is_active,
+      items: b.items_in_bundle.map(i => ({
+        item_id: i.item_id,
+        item_name: i.item?.name || `Item #${i.item_id}`,
+        def_quality: i.def_quality,
+      })),
     });
     setDialogOpen(true);
   };
@@ -94,23 +98,35 @@ export default function AdminBundles() {
         if (form.name !== editingBundle.name) body.name = form.name;
         if ((form.description || '') !== (editingBundle.description || '')) body.description = form.description || undefined;
         if (Number(form.price) !== editingBundle.price) body.price = Number(form.price);
-        if ((form.photo_url || '') !== (editingBundle.photo_url || '')) body.photo_url = form.photo_url || undefined;
+        if ((form.photoUrl || '') !== (editingBundle.photoUrl || '')) body.photoUrl = form.photoUrl || undefined;
         if (form.is_active !== editingBundle.is_active) body.is_active = form.is_active;
         if (Object.keys(body).length) await api.patch(`/api/v1/menu/bundles/${editingBundle.id}`, body);
 
-        // Sync items: remove old, add new
-        const oldIds = new Set(editingBundle.items.map(i => i.item_id));
+        // Sync items: remove deleted, add new, update changed quantities (delete + re-add)
+        const oldItems = editingBundle.items_in_bundle;
+        const oldIds = new Set(oldItems.map(i => i.item_id));
         const newIds = new Set(form.items.map(i => i.item_id));
-        for (const old of editingBundle.items) {
-          if (!newIds.has(old.item_id)) await api.delete(`/api/v1/menu/bundles/${editingBundle.id}/items/${old.item_id}`);
+
+        for (const old of oldItems) {
+          if (!newIds.has(old.item_id)) {
+            await api.delete(`/api/v1/menu/bundles/${editingBundle.id}/items/${old.item_id}`);
+          }
         }
         for (const item of form.items) {
-          if (!oldIds.has(item.item_id)) await api.post(`/api/v1/menu/bundles/${editingBundle.id}/items`, { item_id: item.item_id, def_quality: item.def_quality });
+          if (!oldIds.has(item.item_id)) {
+            await api.post(`/api/v1/menu/bundles/${editingBundle.id}/items`, { item_id: item.item_id, def_quality: item.def_quality });
+          } else {
+            const oldItem = oldItems.find(o => o.item_id === item.item_id);
+            if (oldItem && oldItem.def_quality !== item.def_quality) {
+              await api.delete(`/api/v1/menu/bundles/${editingBundle.id}/items/${item.item_id}`);
+              await api.post(`/api/v1/menu/bundles/${editingBundle.id}/items`, { item_id: item.item_id, def_quality: item.def_quality });
+            }
+          }
         }
       } else {
         await api.post('/api/v1/menu/bundles', {
           name: form.name, description: form.description || undefined, price: Number(form.price),
-          photo_url: form.photo_url || undefined, is_active: form.is_active,
+          photoUrl: form.photoUrl || undefined, is_active: form.is_active,
           items: form.items.map(i => ({ item_id: i.item_id, def_quality: i.def_quality })),
         });
       }
@@ -164,7 +180,7 @@ export default function AdminBundles() {
                 <TableRow key={b.id}>
                   <TableCell className="font-medium">{b.name}</TableCell>
                   <TableCell className="text-right">€{b.price.toFixed(2)}</TableCell>
-                  <TableCell className="text-center">{b.items?.length ?? 0}</TableCell>
+                  <TableCell className="text-center">{b.items_in_bundle?.length ?? 0}</TableCell>
                   <TableCell><Badge variant={b.is_active ? 'default' : 'secondary'}>{b.is_active ? 'Active' : 'Inactive'}</Badge></TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="icon" onClick={() => openEdit(b)}><Pencil className="h-4 w-4" /></Button>
@@ -185,7 +201,7 @@ export default function AdminBundles() {
             <div><Label>Name *</Label><Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
             <div><Label>Description</Label><Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
             <div><Label>Price (€) *</Label><Input type="number" min="0" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} /></div>
-            <div><Label>Photo URL</Label><Input value={form.photo_url} onChange={e => setForm(f => ({ ...f, photo_url: e.target.value }))} /></div>
+            <div><Label>Photo URL</Label><Input value={form.photoUrl} onChange={e => setForm(f => ({ ...f, photoUrl: e.target.value }))} /></div>
             <div className="flex items-center gap-2"><Switch checked={form.is_active} onCheckedChange={v => setForm(f => ({ ...f, is_active: v }))} /><Label>Active</Label></div>
 
             <div className="border-t pt-4 space-y-3">

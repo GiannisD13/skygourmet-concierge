@@ -19,7 +19,7 @@ interface MenuItem {
   category: string;
   price: number;
   description?: string;
-  photo_url?: string;
+  photoUrl?: string;
   is_active: boolean;
 }
 
@@ -28,11 +28,11 @@ interface ItemForm {
   category: string;
   price: string;
   description: string;
-  photo_url: string;
+  photoUrl: string;
   is_active: boolean;
 }
 
-const emptyForm: ItemForm = { name: '', category: '', price: '', description: '', photo_url: '', is_active: true };
+const emptyForm: ItemForm = { name: '', category: '', price: '', description: '', photoUrl: '', is_active: true };
 const categories = ['starter', 'main', 'dessert', 'drink'];
 
 export default function AdminItems() {
@@ -66,7 +66,7 @@ export default function AdminItems() {
   const openCreate = () => { setEditingItem(null); setForm(emptyForm); setDialogOpen(true); };
   const openEdit = (item: MenuItem) => {
     setEditingItem(item);
-    setForm({ name: item.name, category: item.category, price: String(item.price), description: item.description || '', photo_url: item.photo_url || '', is_active: item.is_active });
+    setForm({ name: item.name, category: item.category, price: String(item.price), description: item.description || '', photoUrl: item.photoUrl || '', is_active: item.is_active });
     setDialogOpen(true);
   };
 
@@ -77,7 +77,7 @@ export default function AdminItems() {
     }
     setSaving(true);
     try {
-      const body: Record<string, unknown> = { name: form.name, category: form.category, price: Number(form.price), description: form.description || undefined, photo_url: form.photo_url || undefined, is_active: form.is_active };
+      const body: Record<string, unknown> = { name: form.name, category: form.category, price: Number(form.price), description: form.description || undefined, photoUrl: form.photoUrl || undefined, is_active: form.is_active };
       if (editingItem) {
         const changed: Record<string, unknown> = {};
         for (const key of Object.keys(body)) {
@@ -178,7 +178,7 @@ export default function AdminItems() {
             </div>
             <div><Label>Price (€) *</Label><Input type="number" min="0.01" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} /></div>
             <div><Label>Description</Label><Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
-            <div><Label>Photo URL</Label><Input value={form.photo_url} onChange={e => setForm(f => ({ ...f, photo_url: e.target.value }))} /></div>
+            <div><Label>Photo URL</Label><Input value={form.photoUrl} onChange={e => setForm(f => ({ ...f, photoUrl: e.target.value }))} /></div>
             <div className="flex items-center gap-2"><Switch checked={form.is_active} onCheckedChange={v => setForm(f => ({ ...f, is_active: v }))} /><Label>Active</Label></div>
           </div>
           <DialogFooter>

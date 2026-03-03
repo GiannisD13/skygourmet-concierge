@@ -8,7 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Shield, ShieldOff, Trash2, Loader2 } from 'lucide-react';
 
 interface User {
-  id: number;
+  id: string;
   full_name: string;
   email: string;
   phone?: string;
