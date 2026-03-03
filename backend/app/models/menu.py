@@ -2,6 +2,7 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from app.core.database import Base
+import app.models.airport
 
 class Item(Base):
 
@@ -17,6 +18,7 @@ class Item(Base):
 
     #RELATIONSHIPS
     bundles_included = relationship("BundleItem", back_populates="item")
+    airports = relationship("AirportItem", back_populates="item")
 
 class BundleItem(Base):
 
@@ -44,3 +46,4 @@ class Bundle(Base):
 
     #RELATIONSHIPS
     items_in_bundle = relationship("BundleItem", back_populates="inbundle")
+    airports = relationship("AirportBundle", back_populates="bundle")
