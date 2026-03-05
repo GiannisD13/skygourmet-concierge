@@ -102,7 +102,7 @@ const GuestCheckoutForm = () => {
       localStorage.setItem('auth_token', res.access_token);
       await setTokenAndFetchUser(res.access_token);
 
-      navigate('/confirmation', { state: { orderId: res.order_id } });
+      navigate(`/confirmation?order_id=${res.order_id}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Something went wrong';
       setError(message);

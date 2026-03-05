@@ -69,7 +69,7 @@ const AuthCheckoutForm = () => {
       // 4. Confirm
       await api.post('/api/v1/orders/draft/confirm');
 
-      navigate('/confirmation', { state: { orderId: draft.id } });
+      navigate(`/confirmation?order_id=${draft.id}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Something went wrong';
       setError(message);
