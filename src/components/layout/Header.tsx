@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
-import { Plane, Phone, LogIn, User, ChevronDown, ShieldCheck } from 'lucide-react';
+import { Plane, Phone, LogIn, User, ChevronDown, ShieldCheck, ShoppingCart } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +16,7 @@ const Header = () => {
   const location = useLocation();
   const isHome = location.pathname === '/';
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
+  const { totalCount, openCart } = useCart();
 
   return (
     <motion.header
@@ -42,6 +44,14 @@ const Header = () => {
           </Link>
 
           <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" onClick={openCart} className="relative p-2">
+              <ShoppingCart className="w-5 h-5" />
+              {totalCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-accent text-primary text-[10px] font-bold flex items-center justify-center leading-none">
+                  {totalCount > 9 ? '9+' : totalCount}
+                </span>
+              )}
+            </Button>
             <a
               href="tel:+302101234567"
               className="flex items-center gap-2 text-sm text-muted-foreground hover:text-accent transition-colors"

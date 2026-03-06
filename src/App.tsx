@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { OrderProvider } from "@/context/OrderContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
+import CartDrawer from "@/components/cart/CartDrawer";
 import AdminRoute from "@/components/auth/AdminRoute";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -29,6 +31,8 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <OrderProvider>
+            <CartProvider>
+            <CartDrawer />
             <Toaster />
             <Sonner />
             <Routes>
@@ -49,6 +53,7 @@ const App = () => (
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </CartProvider>
           </OrderProvider>
         </AuthProvider>
       </BrowserRouter>

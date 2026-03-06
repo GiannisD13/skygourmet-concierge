@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import { MapPin, X } from 'lucide-react';
 import { useOrder } from '@/context/OrderContext';
+import { useCart } from '@/context/CartContext';
 
 const OrderSummary = () => {
-  const { selectedAirport, selectedMenu } = useOrder();
+  const { selectedAirport } = useOrder();
+  const { cartBundles, cartItems, totalAmount, removeBundle, removeItem } = useCart();
 
-  if (!selectedMenu || !selectedAirport) return null;
+  if (!selectedAirport) return null;
 
   return (
     <motion.div
@@ -22,33 +24,53 @@ const OrderSummary = () => {
         </span>
       </div>
 
-      {/* Bundle Card */}
       <div className="bg-card rounded-lg shadow-card overflow-hidden">
-        {selectedMenu.image && (
-          <img
-            src={selectedMenu.image}
-            alt={selectedMenu.name}
-            className="w-full h-40 object-cover"
-          />
-        )}
-        <div className="p-6">
-          <h3 className="font-serif text-xl text-foreground mb-1">
-            {selectedMenu.name}
-          </h3>
-          {selectedMenu.subtitle && (
-            <p className="font-sans text-sm text-accent mb-3">
-              {selectedMenu.subtitle}
-            </p>
-          )}
-          <p className="font-sans text-sm text-muted-foreground mb-4">
-            {selectedMenu.description}
-          </p>
+        <div className="p-6 space-y-4">
+          <h3 className="font-serif text-lg text-foreground">Order Summary</h3>
 
-          <div className="border-t border-border pt-4">
+          {/* Bundles */}
+          {cartBundles.map(bundle => (
+            <div key={bundle.id} className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <p className="font-sans text-sm text-foreground font-medium leading-tight">{bundle.name}</p>
+                <p className="font-sans text-xs text-muted-foreground mt-0.5">Menu package</p>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className="font-serif text-sm text-foreground">€{bundle.price.toLocaleString()}</span>
+                <button
+                  onClick={() => removeBundle(bundle.id)}
+                  className="text-muted-foreground hover:text-destructive transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {/* Items */}
+          {cartItems.map(item => (
+            <div key={item.id} className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <p className="font-sans text-sm text-foreground font-medium leading-tight">{item.name}</p>
+                <p className="font-sans text-xs text-muted-foreground mt-0.5">× {item.quantity}</p>
+              </div>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className="font-serif text-sm text-foreground">€{(item.price * item.quantity).toLocaleString()}</span>
+                <button
+                  onClick={() => removeItem(item.id)}
+                  className="text-muted-foreground hover:text-destructive transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <div className="border-t border-border pt-4 mt-2">
             <div className="flex justify-between items-end">
-              <span className="font-sans text-sm text-muted-foreground">Price per guest</span>
+              <span className="font-sans text-sm text-muted-foreground">Total</span>
               <span className="font-serif text-2xl text-foreground">
-                €{selectedMenu.price.toLocaleString()}
+                €{totalAmount.toLocaleString()}
               </span>
             </div>
           </div>

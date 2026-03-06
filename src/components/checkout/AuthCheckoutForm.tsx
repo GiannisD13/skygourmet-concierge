@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plane, Users, FileText, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useOrder } from '@/context/OrderContext';
+import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +14,7 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const AuthCheckoutForm = () => {
-  const { selectedMenu } = useOrder();
+  const { cartBundles, cartItems, totalAmount, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -53,10 +53,14 @@ const AuthCheckoutForm = () => {
       // 1. Create draft
       const draft = await api.post<{ id: number }>('/api/v1/orders/draft');
 
-      // 2. Add bundle
-      const bundleId = selectedMenu?.bundleId;
-      if (bundleId) {
-        await api.post(`/api/v1/orders/draft/bundles/${bundleId}`);
+      // 2. Add bundles
+      for (const b of cartBundles) {
+        await api.post(`/api/v1/orders/draft/bundles/${b.id}`);
+      }
+
+      // 2b. Add individual items
+      for (const i of cartItems) {
+        await api.post(`/api/v1/orders/draft/items?item_id=${i.id}&quantity=${i.quantity}`);
       }
 
       // 3. Update details
@@ -69,6 +73,7 @@ const AuthCheckoutForm = () => {
       // 4. Confirm
       await api.post('/api/v1/orders/draft/confirm');
 
+      clearCart();
       navigate(`/confirmation?order_id=${draft.id}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Something went wrong';
@@ -173,7 +178,7 @@ const AuthCheckoutForm = () => {
         {isSubmitting ? (
           <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Processing...</span>
         ) : (
-          `Complete Order • €${selectedMenu ? (selectedMenu.price * passengerCount).toLocaleString() : 0}`
+          `Complete Order • €${totalAmount.toLocaleString()}`
         )}
       </Button>
     </motion.form>

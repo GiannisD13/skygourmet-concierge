@@ -1,16 +1,16 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Check } from 'lucide-react';
+import { ShoppingCart, Check } from 'lucide-react';
 import { MenuTier } from '@/types/catering';
 import { Button } from '@/components/ui/button';
 
 interface MenuCardProps {
   menu: MenuTier;
   index: number;
-  onSelect: (menu: MenuTier) => void;
+  onAddToCart: (menu: MenuTier) => void;
   onViewDetails: (menu: MenuTier) => void;
 }
 
-const MenuCard: React.FC<MenuCardProps> = ({ menu, index, onSelect, onViewDetails }) => {
+const MenuCard: React.FC<MenuCardProps> = ({ menu, index, onAddToCart, onViewDetails }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -81,11 +81,11 @@ const MenuCard: React.FC<MenuCardProps> = ({ menu, index, onSelect, onViewDetail
             <Button
               variant="navy"
               size="sm"
-              onClick={() => onSelect(menu)}
+              onClick={() => onAddToCart(menu)}
               className="gap-2"
             >
-              Add to Flight
-              <ArrowRight className="w-4 h-4" />
+              <ShoppingCart className="w-4 h-4" />
+              Add to Cart
             </Button>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Phone, Lock, Plane, Users, FileText, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useOrder } from '@/context/OrderContext';
+import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 import { useNavigate, Link } from 'react-router-dom';
@@ -21,7 +21,7 @@ interface CheckoutResponse {
 }
 
 const GuestCheckoutForm = () => {
-  const { selectedMenu } = useOrder();
+  const { cartBundles, cartItems, totalAmount, clearCart } = useCart();
   const { setTokenAndFetchUser } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -83,7 +83,6 @@ const GuestCheckoutForm = () => {
     setIsSubmitting(true);
 
     try {
-      const bundleId = selectedMenu?.bundleId;
       const body = {
         full_name: form.full_name,
         email: form.email,
@@ -92,8 +91,8 @@ const GuestCheckoutForm = () => {
         tail_number: form.tail_number,
         passenger_count: form.passenger_count,
         flight_date: combinedDate.toISOString(),
-        bundles: bundleId ? [bundleId] : [],
-        custom_items: [],
+        bundles: cartBundles.map(b => b.id),
+        custom_items: cartItems.map(i => ({ item_id: i.id, quantity: i.quantity })),
       };
 
       const res = await api.post<CheckoutResponse>('/api/v1/orders/checkout', body);
@@ -102,6 +101,7 @@ const GuestCheckoutForm = () => {
       localStorage.setItem('auth_token', res.access_token);
       await setTokenAndFetchUser(res.access_token);
 
+      clearCart();
       navigate(`/confirmation?order_id=${res.order_id}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Something went wrong';
@@ -252,7 +252,7 @@ const GuestCheckoutForm = () => {
         {isSubmitting ? (
           <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Processing...</span>
         ) : (
-          `Complete Order • €${selectedMenu ? (selectedMenu.price * form.passenger_count).toLocaleString() : 0}`
+          `Complete Order • €${totalAmount.toLocaleString()}`
         )}
       </Button>
 

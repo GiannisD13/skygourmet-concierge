@@ -18,6 +18,7 @@ class OrderItemCreate(BaseModel):
 class OrderItem(OrderItemBase):
     id: int
     order_id: int
+    bundle_id: Optional[int] = None
     item: Item  # nested item details
 
     class Config:

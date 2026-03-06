@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check } from 'lucide-react';
+import { X, Check, ShoppingCart } from 'lucide-react';
 import { MenuTier } from '@/types/catering';
 import { Button } from '@/components/ui/button';
 
@@ -7,14 +7,14 @@ interface MenuDetailDialogProps {
   menu: MenuTier | null;
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (menu: MenuTier) => void;
+  onAddToCart: (menu: MenuTier) => void;
 }
 
 const MenuDetailDialog: React.FC<MenuDetailDialogProps> = ({
   menu,
   isOpen,
   onClose,
-  onSelect,
+  onAddToCart,
 }) => {
   if (!menu) return null;
 
@@ -110,11 +110,13 @@ const MenuDetailDialog: React.FC<MenuDetailDialogProps> = ({
                 variant="navy"
                 size="xl"
                 onClick={() => {
-                  onSelect(menu);
+                  onAddToCart(menu);
                   onClose();
                 }}
+                className="gap-2"
               >
-                Add to Flight
+                <ShoppingCart className="w-4 h-4" />
+                Add to Cart
               </Button>
             </div>
             </motion.div>

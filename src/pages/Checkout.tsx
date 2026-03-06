@@ -7,21 +7,25 @@ import GuestCheckoutForm from '@/components/checkout/GuestCheckoutForm';
 import AuthCheckoutForm from '@/components/checkout/AuthCheckoutForm';
 import OrderSummary from '@/components/checkout/OrderSummary';
 import { useOrder } from '@/context/OrderContext';
+import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { selectedAirport, selectedMenu } = useOrder();
+  const { selectedAirport } = useOrder();
+  const { cartBundles, cartItems } = useCart();
   const { isAuthenticated } = useAuth();
 
+  const cartEmpty = cartBundles.length === 0 && cartItems.length === 0;
+
   useEffect(() => {
-    if (!selectedAirport || !selectedMenu) {
+    if (!selectedAirport || cartEmpty) {
       navigate('/');
     }
-  }, [selectedAirport, selectedMenu, navigate]);
+  }, [selectedAirport, cartEmpty, navigate]);
 
-  if (!selectedAirport || !selectedMenu) return null;
+  if (!selectedAirport || cartEmpty) return null;
 
   return (
     <div className="min-h-screen bg-background">
