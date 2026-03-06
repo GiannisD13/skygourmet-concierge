@@ -37,6 +37,8 @@ const App = () => (
               <Route path="/menu" element={<MenuSelection />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/confirmation" element={<Confirmation />} />
+              <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
                 <Route index element={<Navigate to="/admin/items" replace />} />
                 <Route path="items" element={<AdminItems />} />
