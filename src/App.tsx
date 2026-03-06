@@ -6,12 +6,15 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { OrderProvider } from "@/context/OrderContext";
 import { AuthProvider } from "@/context/AuthContext";
 import AdminRoute from "@/components/auth/AdminRoute";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import AdminLayout from "@/components/admin/AdminLayout";
 import Index from "./pages/Index";
 import MenuSelection from "./pages/MenuSelection";
 import Checkout from "./pages/Checkout";
 import Confirmation from "./pages/Confirmation";
 import Login from "./pages/Login";
+import Orders from "./pages/Orders";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AdminItems from "./pages/admin/AdminItems";
 import AdminBundles from "./pages/admin/AdminBundles";
@@ -34,6 +37,8 @@ const App = () => (
               <Route path="/menu" element={<MenuSelection />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/confirmation" element={<Confirmation />} />
+              <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
                 <Route index element={<Navigate to="/admin/items" replace />} />
                 <Route path="items" element={<AdminItems />} />
