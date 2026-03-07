@@ -97,10 +97,14 @@ def create_bundle(db:Session, bundle:schemas.BundleCreate):
         db_bundle_item = models.BundleItem(
             bundle_id=db_bundle.id,
             item_id=item_in.item_id,
-            def_quality=item_in.def_quality
+            def_quality=item_in.def_quality,
+            qty_4=item_in.qty_4,
+            qty_6=item_in.qty_6,
+            qty_8=item_in.qty_8,
+            qty_10=item_in.qty_10,
         )
         db.add(db_bundle_item)
-    
+
     db.commit()
     db.refresh(db_bundle)
     return db_bundle
@@ -129,17 +133,20 @@ def delete_bundle(db: Session, bundle_id: int) -> bool:
 
 # --- CRUD για Bundle Items (Προσθήκη/Αφαίρεση items από bundle) ---
 
-def add_item_to_bundle(db: Session, bundle_id: int, item_id: int, def_quality: int = 1) -> models.BundleItem:
+def add_item_to_bundle(
+    db: Session, bundle_id: int, item_id: int, def_quality: int = 1,
+    qty_4: int = None, qty_6: int = None, qty_8: int = None, qty_10: int = None,
+) -> models.BundleItem:
     """Add an item to an existing bundle"""
     bundle = db.query(models.Bundle).filter(models.Bundle.id == bundle_id).first()
     if not bundle:
         raise ValueError(f"Bundle {bundle_id} not found")
-    
+
     # Check if item exists
     item = db.query(models.Item).filter(models.Item.id == item_id).first()
     if not item:
         raise ValueError(f"Item {item_id} not found")
-    
+
     # Check if item already in bundle
     existing = db.query(models.BundleItem).filter(
         models.BundleItem.bundle_id == bundle_id,
@@ -147,12 +154,16 @@ def add_item_to_bundle(db: Session, bundle_id: int, item_id: int, def_quality: i
     ).first()
     if existing:
         raise ValueError(f"Item {item_id} already in bundle {bundle_id}")
-    
+
     # Add item to bundle
     db_bundle_item = models.BundleItem(
         bundle_id=bundle_id,
         item_id=item_id,
-        def_quality=def_quality
+        def_quality=def_quality,
+        qty_4=qty_4,
+        qty_6=qty_6,
+        qty_8=qty_8,
+        qty_10=qty_10,
     )
     db.add(db_bundle_item)
     db.commit()
@@ -214,7 +225,11 @@ def replace_bundle_items(db: Session, bundle_id: int, new_items: List[schemas.Bu
         db_bundle_item = models.BundleItem(
             bundle_id=bundle_id,
             item_id=item_in.item_id,
-            def_quality=item_in.def_quality
+            def_quality=item_in.def_quality,
+            qty_4=item_in.qty_4,
+            qty_6=item_in.qty_6,
+            qty_8=item_in.qty_8,
+            qty_10=item_in.qty_10,
         )
         db.add(db_bundle_item)
     

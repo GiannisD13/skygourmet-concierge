@@ -13,16 +13,71 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Pencil, Trash2, X, Loader2 } from 'lucide-react';
 
-interface BundleItem { item_id: number; item?: { id: number; name: string }; def_quality: number; }
-interface Bundle { id: number; name: string; description?: string; price: number; photoUrl?: string; is_active: boolean; items_in_bundle: BundleItem[]; }
+const PAX = [2, 4, 6, 8, 10] as const;
+type PaxCount = typeof PAX[number];
+
+interface BundleItemRow {
+  item_id: number;
+  item_name: string;
+  def_quality: number;      // qty for 2 pax
+  qty_4: number | null;
+  qty_6: number | null;
+  qty_8: number | null;
+  qty_10: number | null;
+}
+
+interface BackendBundleItem {
+  item_id: number;
+  def_quality: number;
+  qty_4: number | null;
+  qty_6: number | null;
+  qty_8: number | null;
+  qty_10: number | null;
+  item?: { id: number; name: string };
+}
+
+interface Bundle {
+  id: number;
+  name: string;
+  description?: string;
+  price: number;       // price for 2 pax
+  price_4?: number | null;
+  price_6?: number | null;
+  price_8?: number | null;
+  price_10?: number | null;
+  photoUrl?: string;
+  is_active: boolean;
+  items_in_bundle: BackendBundleItem[];
+}
+
 interface MenuItem { id: number; name: string; category: string; is_active: boolean; }
 
 interface BundleForm {
-  name: string; description: string; price: string; photoUrl: string; is_active: boolean;
-  items: { item_id: number; item_name: string; def_quality: number }[];
+  name: string;
+  description: string;
+  price: string;       // price for 2 pax
+  price_4: string;
+  price_6: string;
+  price_8: string;
+  price_10: string;
+  photoUrl: string;
+  is_active: boolean;
+  items: BundleItemRow[];
 }
 
-const emptyForm: BundleForm = { name: '', description: '', price: '', photoUrl: '', is_active: true, items: [] };
+const emptyForm: BundleForm = {
+  name: '', description: '', price: '', price_4: '', price_6: '', price_8: '', price_10: '',
+  photoUrl: '', is_active: true, items: [],
+};
+
+function numOrNull(val: string): number | null {
+  const n = parseFloat(val);
+  return isNaN(n) ? null : n;
+}
+
+function intOrNull(val: number | null | undefined): number | null {
+  return val == null ? null : val;
+}
 
 export default function AdminBundles() {
   const { toast } = useToast();
@@ -35,9 +90,7 @@ export default function AdminBundles() {
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Bundle | null>(null);
 
-  // Item adder state
   const [addItemId, setAddItemId] = useState('');
-  const [addItemQty, setAddItemQty] = useState('1');
 
   const fetchBundles = useCallback(async () => {
     try {
@@ -62,12 +115,23 @@ export default function AdminBundles() {
   const openEdit = (b: Bundle) => {
     setEditingBundle(b);
     setForm({
-      name: b.name, description: b.description || '', price: String(b.price),
-      photoUrl: b.photoUrl || '', is_active: b.is_active,
+      name: b.name,
+      description: b.description || '',
+      price: String(b.price),
+      price_4: b.price_4 != null ? String(b.price_4) : '',
+      price_6: b.price_6 != null ? String(b.price_6) : '',
+      price_8: b.price_8 != null ? String(b.price_8) : '',
+      price_10: b.price_10 != null ? String(b.price_10) : '',
+      photoUrl: b.photoUrl || '',
+      is_active: b.is_active,
       items: b.items_in_bundle.map(i => ({
         item_id: i.item_id,
         item_name: i.item?.name || `Item #${i.item_id}`,
         def_quality: i.def_quality,
+        qty_4: i.qty_4 ?? null,
+        qty_6: i.qty_6 ?? null,
+        qty_8: i.qty_8 ?? null,
+        qty_10: i.qty_10 ?? null,
       })),
     });
     setDialogOpen(true);
@@ -78,16 +142,31 @@ export default function AdminBundles() {
     if (!id || form.items.some(i => i.item_id === id)) return;
     const item = allItems.find(i => i.id === id);
     if (!item) return;
-    setForm(f => ({ ...f, items: [...f.items, { item_id: id, item_name: item.name, def_quality: Math.max(1, Number(addItemQty) || 1) }] }));
-    setAddItemId(''); setAddItemQty('1');
+    setForm(f => ({
+      ...f,
+      items: [...f.items, { item_id: id, item_name: item.name, def_quality: 1, qty_4: null, qty_6: null, qty_8: null, qty_10: null }],
+    }));
+    setAddItemId('');
   };
 
-  const removeItemFromForm = (itemId: number) => setForm(f => ({ ...f, items: f.items.filter(i => i.item_id !== itemId) }));
-  const updateItemQty = (itemId: number, qty: number) => setForm(f => ({ ...f, items: f.items.map(i => i.item_id === itemId ? { ...i, def_quality: Math.max(1, qty) } : i) }));
+  const removeItemFromForm = (itemId: number) =>
+    setForm(f => ({ ...f, items: f.items.filter(i => i.item_id !== itemId) }));
+
+  const updateItemQtyField = (itemId: number, field: keyof BundleItemRow, value: string) => {
+    setForm(f => ({
+      ...f,
+      items: f.items.map(i => {
+        if (i.item_id !== itemId) return i;
+        if (field === 'def_quality') return { ...i, def_quality: Math.max(1, Number(value) || 1) };
+        const n = value === '' ? null : Math.max(1, Number(value) || 1);
+        return { ...i, [field]: n };
+      }),
+    }));
+  };
 
   const handleSave = async () => {
     if (!form.name || !form.price || Number(form.price) < 0) {
-      toast({ title: 'Validation', description: 'Name and price (≥0) are required', variant: 'destructive' });
+      toast({ title: 'Validation', description: 'Name and price for 2 pax (≥0) are required', variant: 'destructive' });
       return;
     }
     setSaving(true);
@@ -98,11 +177,15 @@ export default function AdminBundles() {
         if (form.name !== editingBundle.name) body.name = form.name;
         if ((form.description || '') !== (editingBundle.description || '')) body.description = form.description || undefined;
         if (Number(form.price) !== editingBundle.price) body.price = Number(form.price);
+        body.price_4  = numOrNull(form.price_4);
+        body.price_6  = numOrNull(form.price_6);
+        body.price_8  = numOrNull(form.price_8);
+        body.price_10 = numOrNull(form.price_10);
         if ((form.photoUrl || '') !== (editingBundle.photoUrl || '')) body.photoUrl = form.photoUrl || undefined;
         if (form.is_active !== editingBundle.is_active) body.is_active = form.is_active;
         if (Object.keys(body).length) await api.patch(`/api/v1/menu/bundles/${editingBundle.id}`, body);
 
-        // Sync items: remove deleted, add new, update changed quantities (delete + re-add)
+        // Sync items
         const oldItems = editingBundle.items_in_bundle;
         const oldIds = new Set(oldItems.map(i => i.item_id));
         const newIds = new Set(form.items.map(i => i.item_id));
@@ -113,21 +196,50 @@ export default function AdminBundles() {
           }
         }
         for (const item of form.items) {
+          const oldItem = oldItems.find(o => o.item_id === item.item_id);
+          const payload = {
+            item_id: item.item_id,
+            def_quality: item.def_quality,
+            qty_4: intOrNull(item.qty_4),
+            qty_6: intOrNull(item.qty_6),
+            qty_8: intOrNull(item.qty_8),
+            qty_10: intOrNull(item.qty_10),
+          };
           if (!oldIds.has(item.item_id)) {
-            await api.post(`/api/v1/menu/bundles/${editingBundle.id}/items`, { item_id: item.item_id, def_quality: item.def_quality });
+            await api.post(`/api/v1/menu/bundles/${editingBundle.id}/items`, payload);
           } else {
-            const oldItem = oldItems.find(o => o.item_id === item.item_id);
-            if (oldItem && oldItem.def_quality !== item.def_quality) {
+            // check if anything changed
+            const changed =
+              oldItem?.def_quality !== item.def_quality ||
+              oldItem?.qty_4 !== item.qty_4 ||
+              oldItem?.qty_6 !== item.qty_6 ||
+              oldItem?.qty_8 !== item.qty_8 ||
+              oldItem?.qty_10 !== item.qty_10;
+            if (changed) {
               await api.delete(`/api/v1/menu/bundles/${editingBundle.id}/items/${item.item_id}`);
-              await api.post(`/api/v1/menu/bundles/${editingBundle.id}/items`, { item_id: item.item_id, def_quality: item.def_quality });
+              await api.post(`/api/v1/menu/bundles/${editingBundle.id}/items`, payload);
             }
           }
         }
       } else {
         await api.post('/api/v1/menu/bundles', {
-          name: form.name, description: form.description || undefined, price: Number(form.price),
-          photoUrl: form.photoUrl || undefined, is_active: form.is_active,
-          items: form.items.map(i => ({ item_id: i.item_id, def_quality: i.def_quality })),
+          name: form.name,
+          description: form.description || undefined,
+          price: Number(form.price),
+          price_4: numOrNull(form.price_4),
+          price_6: numOrNull(form.price_6),
+          price_8: numOrNull(form.price_8),
+          price_10: numOrNull(form.price_10),
+          photoUrl: form.photoUrl || undefined,
+          is_active: form.is_active,
+          items: form.items.map(i => ({
+            item_id: i.item_id,
+            def_quality: i.def_quality,
+            qty_4: intOrNull(i.qty_4),
+            qty_6: intOrNull(i.qty_6),
+            qty_8: intOrNull(i.qty_8),
+            qty_10: intOrNull(i.qty_10),
+          })),
         });
       }
       toast({ title: 'Success', description: editingBundle ? 'Bundle updated' : 'Bundle created' });
@@ -167,7 +279,7 @@ export default function AdminBundles() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
-                <TableHead className="text-right">Price</TableHead>
+                <TableHead className="text-right">Price (2 pax)</TableHead>
                 <TableHead className="text-center">Items</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -195,45 +307,93 @@ export default function AdminBundles() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editingBundle ? 'Edit Bundle' : 'New Bundle'}</DialogTitle></DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div><Label>Name *</Label><Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
             <div><Label>Description</Label><Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} /></div>
-            <div><Label>Price (€) *</Label><Input type="number" min="0" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} /></div>
             <div><Label>Photo URL</Label><Input value={form.photoUrl} onChange={e => setForm(f => ({ ...f, photoUrl: e.target.value }))} /></div>
             <div className="flex items-center gap-2"><Switch checked={form.is_active} onCheckedChange={v => setForm(f => ({ ...f, is_active: v }))} /><Label>Active</Label></div>
 
+            {/* Pricing per passenger count */}
             <div className="border-t pt-4 space-y-3">
-              <Label className="text-base font-semibold">Bundle Items</Label>
+              <Label className="text-base font-semibold">Pricing per Passenger Count</Label>
+              <p className="text-xs text-muted-foreground">Leave blank to auto-calculate (linear scaling from 2-pax price).</p>
+              <div className="grid grid-cols-5 gap-2">
+                {PAX.map(n => (
+                  <div key={n}>
+                    <Label className="text-xs">{n} pax {n === 2 ? '*' : ''}</Label>
+                    <Input
+                      type="number" min="0" step="0.01"
+                      value={n === 2 ? form.price : form[`price_${n}` as keyof BundleForm] as string}
+                      onChange={e => {
+                        const field = n === 2 ? 'price' : `price_${n}`;
+                        setForm(f => ({ ...f, [field]: e.target.value }));
+                      }}
+                      placeholder={n === 2 ? 'Required' : 'Auto'}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Bundle Items */}
+            <div className="border-t pt-4 space-y-3">
+              <Label className="text-base font-semibold">Bundle Items & Quantities</Label>
+              <p className="text-xs text-muted-foreground">Set quantity per passenger count for each item. Leave blank to auto-scale.</p>
+
               {form.items.length > 0 && (
-                <div className="space-y-2">
+                <div className="space-y-3">
+                  {/* Header */}
+                  <div className="grid grid-cols-[1fr_repeat(5,48px)_32px] gap-1 text-xs text-muted-foreground px-3">
+                    <span>Item</span>
+                    {PAX.map(n => <span key={n} className="text-center">{n}p</span>)}
+                    <span />
+                  </div>
                   {form.items.map(item => (
-                    <div key={item.item_id} className="flex items-center gap-2 bg-muted rounded-md px-3 py-2">
-                      <span className="flex-1 text-sm">{item.item_name}</span>
-                      <Input type="number" min="1" className="w-20 h-8" value={item.def_quality} onChange={e => updateItemQty(item.item_id, Number(e.target.value))} />
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItemFromForm(item.item_id)}><X className="h-4 w-4" /></Button>
+                    <div key={item.item_id} className="grid grid-cols-[1fr_repeat(5,48px)_32px] gap-1 items-center bg-muted rounded-md px-3 py-2">
+                      <span className="text-sm truncate">{item.item_name}</span>
+                      {PAX.map(n => {
+                        const field = n === 2 ? 'def_quality' : `qty_${n}` as keyof BundleItemRow;
+                        const val = n === 2 ? item.def_quality : (item[field as 'qty_4'] ?? '');
+                        return (
+                          <Input
+                            key={n}
+                            type="number" min="1"
+                            className="h-8 px-1 text-center text-sm"
+                            value={val === null ? '' : val}
+                            placeholder={n === 2 ? '—' : 'auto'}
+                            onChange={e => updateItemQtyField(item.item_id, field, e.target.value)}
+                          />
+                        );
+                      })}
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeItemFromForm(item.item_id)}>
+                        <X className="h-4 w-4" />
+                      </Button>
                     </div>
                   ))}
                 </div>
               )}
+
               <div className="flex gap-2 items-end">
                 <div className="flex-1">
                   <Select value={addItemId} onValueChange={setAddItemId}>
-                    <SelectTrigger><SelectValue placeholder="Select item..." /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Select item to add..." /></SelectTrigger>
                     <SelectContent>
                       {availableItems.map(i => <SelectItem key={i.id} value={String(i.id)}>{i.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
-                <Input type="number" min="1" className="w-20" placeholder="Qty" value={addItemQty} onChange={e => setAddItemQty(e.target.value)} />
-                <Button variant="outline" size="sm" onClick={addItemToForm} disabled={!addItemId}>Add</Button>
+                <Button variant="outline" size="sm" onClick={addItemToForm} disabled={!addItemId}>Add Item</Button>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} disabled={saving}>{saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}{editingBundle ? 'Update' : 'Create'}</Button>
+            <Button onClick={handleSave} disabled={saving}>
+              {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {editingBundle ? 'Update' : 'Create'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

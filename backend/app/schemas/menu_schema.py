@@ -32,7 +32,11 @@ class Item(ItemBase):
 # ============ BUNDLE ITEM SCHEMAS ============
 class BundleItemBase(BaseModel):
     item_id: int
-    def_quality: int = Field(default=1, ge=1)  
+    def_quality: int = Field(default=1, ge=1)   # qty for 2 pax
+    qty_4:  Optional[int] = Field(None, ge=1)
+    qty_6:  Optional[int] = Field(None, ge=1)
+    qty_8:  Optional[int] = Field(None, ge=1)
+    qty_10: Optional[int] = Field(None, ge=1)
 
 class BundleItemCreate(BundleItemBase):
     pass
@@ -48,7 +52,11 @@ class BundleItem(BundleItemBase):
 class BundleItemAdd(BaseModel):
     item_id: int
     def_quality: int = Field(default=1, ge=1)
-    
+    qty_4:  Optional[int] = Field(None, ge=1)
+    qty_6:  Optional[int] = Field(None, ge=1)
+    qty_8:  Optional[int] = Field(None, ge=1)
+    qty_10: Optional[int] = Field(None, ge=1)
+
 class BundleItemQuantityUpdate(BaseModel):
     def_quality: int = Field(..., ge=1)
 
@@ -57,7 +65,11 @@ class BundleItemQuantityUpdate(BaseModel):
 class BundleBase(BaseModel):
     name: str = Field(..., min_length=1, max_length=200)
     description: Optional[str] = None
-    price: float = Field(..., ge=0)
+    price: float = Field(..., ge=0)          # price for 2 pax
+    price_4:  Optional[float] = Field(None, ge=0)
+    price_6:  Optional[float] = Field(None, ge=0)
+    price_8:  Optional[float] = Field(None, ge=0)
+    price_10: Optional[float] = Field(None, ge=0)
     photoUrl: Optional[str] = None
     is_active: bool = True
 
@@ -68,6 +80,10 @@ class BundleUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = None
     price: Optional[float] = Field(None, ge=0)
+    price_4:  Optional[float] = Field(None, ge=0)
+    price_6:  Optional[float] = Field(None, ge=0)
+    price_8:  Optional[float] = Field(None, ge=0)
+    price_10: Optional[float] = Field(None, ge=0)
     photoUrl: Optional[str] = None
     is_active: Optional[bool] = None
 

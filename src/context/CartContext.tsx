@@ -1,11 +1,21 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+export interface CartBundleLineItem {
+  id: number;        // item_id
+  name: string;
+  unitPrice: number; // item.price
+  defaultQty: number;// admin-set qty for selected paxCount
+  quantity: number;  // current qty (user-adjusted in dialog)
+}
+
 export interface CartBundle {
   id: number;
   name: string;
-  price: number;
   description?: string;
   photoUrl?: string;
+  paxCount: number;
+  basePrice: number;        // admin-set bundle price for paxCount
+  lineItems: CartBundleLineItem[];
 }
 
 export interface CartItem {
@@ -14,6 +24,15 @@ export interface CartItem {
   price: number;
   category: string;
   quantity: number;
+}
+
+/** Price of a bundle = basePrice + Σ (qty - defaultQty) * unitPrice for each lineItem */
+export function calcBundlePrice(bundle: CartBundle): number {
+  const adjustment = bundle.lineItems.reduce(
+    (sum, li) => sum + (li.quantity - li.defaultQty) * li.unitPrice,
+    0
+  );
+  return Math.max(0, bundle.basePrice + adjustment);
 }
 
 interface CartContextType {
@@ -40,14 +59,18 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [isOpen, setIsOpen] = useState(false);
 
   const totalAmount =
-    cartBundles.reduce((sum, b) => sum + b.price, 0) +
+    cartBundles.reduce((sum, b) => sum + calcBundlePrice(b), 0) +
     cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
-  const totalCount = cartBundles.length + cartItems.reduce((sum, i) => sum + i.quantity, 0);
+  const totalCount =
+    cartBundles.length + cartItems.reduce((sum, i) => sum + i.quantity, 0);
 
   const addBundle = (bundle: CartBundle) => {
     setCartBundles(prev => {
-      if (prev.find(b => b.id === bundle.id)) return prev;
+      // replace if same bundle id already in cart
+      if (prev.find(b => b.id === bundle.id)) {
+        return prev.map(b => b.id === bundle.id ? bundle : b);
+      }
       return [...prev, bundle];
     });
   };
@@ -67,10 +90,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const updateItemQty = (id: number, qty: number) => {
-    if (qty <= 0) {
-      removeItem(id);
-      return;
-    }
+    if (qty <= 0) { removeItem(id); return; }
     setCartItems(prev => prev.map(i => i.id === id ? { ...i, quantity: qty } : i));
   };
 
@@ -78,29 +98,15 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCartItems(prev => prev.filter(i => i.id !== id));
   };
 
-  const clearCart = () => {
-    setCartBundles([]);
-    setCartItems([]);
-  };
-
+  const clearCart = () => { setCartBundles([]); setCartItems([]); };
   const openCart = () => setIsOpen(true);
   const closeCart = () => setIsOpen(false);
 
   return (
     <CartContext.Provider value={{
-      cartBundles,
-      cartItems,
-      isOpen,
-      totalAmount,
-      totalCount,
-      addBundle,
-      removeBundle,
-      addItem,
-      updateItemQty,
-      removeItem,
-      clearCart,
-      openCart,
-      closeCart,
+      cartBundles, cartItems, isOpen, totalAmount, totalCount,
+      addBundle, removeBundle, addItem, updateItemQty, removeItem,
+      clearCart, openCart, closeCart,
     }}>
       {children}
     </CartContext.Provider>

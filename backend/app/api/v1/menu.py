@@ -97,7 +97,10 @@ def delete_bundle(bundle_id: int, db: Session = Depends(get_db)):
 @router.post("/bundles/{bundle_id}/items", response_model=BundleItem, dependencies=[Depends(require_admin)])
 def add_item_to_bundle(bundle_id: int, data: BundleItemAdd, db: Session = Depends(get_db)):
     try:
-        return crud.add_item_to_bundle(db, bundle_id, data.item_id, data.def_quality)
+        return crud.add_item_to_bundle(
+            db, bundle_id, data.item_id, data.def_quality,
+            qty_4=data.qty_4, qty_6=data.qty_6, qty_8=data.qty_8, qty_10=data.qty_10,
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

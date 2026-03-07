@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { MapPin, X } from 'lucide-react';
+import { MapPin, X, Users } from 'lucide-react';
 import { useOrder } from '@/context/OrderContext';
-import { useCart } from '@/context/CartContext';
+import { useCart, calcBundlePrice } from '@/context/CartContext';
 
 const OrderSummary = () => {
   const { selectedAirport } = useOrder();
@@ -33,10 +33,13 @@ const OrderSummary = () => {
             <div key={bundle.id} className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <p className="font-sans text-sm text-foreground font-medium leading-tight">{bundle.name}</p>
-                <p className="font-sans text-xs text-muted-foreground mt-0.5">Menu package</p>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <Users className="w-3 h-3 text-muted-foreground" />
+                  <p className="font-sans text-xs text-muted-foreground">{bundle.paxCount} passengers</p>
+                </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="font-serif text-sm text-foreground">€{bundle.price.toLocaleString()}</span>
+                <span className="font-serif text-sm text-foreground">€{calcBundlePrice(bundle).toLocaleString()}</span>
                 <button
                   onClick={() => removeBundle(bundle.id)}
                   className="text-muted-foreground hover:text-destructive transition-colors"

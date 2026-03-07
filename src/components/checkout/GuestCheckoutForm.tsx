@@ -22,6 +22,7 @@ interface CheckoutResponse {
 
 const GuestCheckoutForm = () => {
   const { cartBundles, cartItems, totalAmount, clearCart } = useCart();
+  const defaultPax = cartBundles[0]?.paxCount ?? 2;
   const { setTokenAndFetchUser } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -33,7 +34,7 @@ const GuestCheckoutForm = () => {
     password: '',
     confirmPassword: '',
     tail_number: '',
-    passenger_count: 1,
+    passenger_count: defaultPax,
     special_requirements: '',
   });
   const [flightDate, setFlightDate] = useState<Date | undefined>();
@@ -83,6 +84,13 @@ const GuestCheckoutForm = () => {
     setIsSubmitting(true);
 
     try {
+      const bundleLineItems = cartBundles.flatMap(b =>
+        b.lineItems
+          .filter(li => li.quantity > 0)
+          .map(li => ({ item_id: li.id, quantity: li.quantity, bundle_id: b.id }))
+      );
+      const standaloneItems = cartItems.map(i => ({ item_id: i.id, quantity: i.quantity }));
+
       const body = {
         full_name: form.full_name,
         email: form.email,
@@ -91,8 +99,8 @@ const GuestCheckoutForm = () => {
         tail_number: form.tail_number,
         passenger_count: form.passenger_count,
         flight_date: combinedDate.toISOString(),
-        bundles: cartBundles.map(b => b.id),
-        custom_items: cartItems.map(i => ({ item_id: i.id, quantity: i.quantity })),
+        bundles: [],
+        custom_items: [...bundleLineItems, ...standaloneItems],
       };
 
       const res = await api.post<CheckoutResponse>('/api/v1/orders/checkout', body);

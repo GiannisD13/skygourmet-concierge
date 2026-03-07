@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app.api.deps import get_db, get_current_user
 from app.core.security import create_access_token
@@ -68,6 +68,7 @@ def create_draft(
 def add_item(
     item_id: int,
     quantity: int,
+    bundle_id: Optional[int] = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -75,7 +76,7 @@ def add_item(
     if not draft:
         raise HTTPException(status_code=404, detail="No active draft order")
     try:
-        return crud.add_item_to_order(db, draft.id, item_id, quantity)
+        return crud.add_item_to_order(db, draft.id, item_id, quantity, bundle_id=bundle_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

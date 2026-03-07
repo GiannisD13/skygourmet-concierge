@@ -13,7 +13,7 @@ class OrderItemBase(BaseModel):
 class OrderItemCreate(BaseModel):
     item_id: int
     quantity: int = Field(..., ge=1)
-    # unit_price θα υπολογιστεί από το backend
+    bundle_id: Optional[int] = None  # optional bundle association (for grouping)
 
 class OrderItem(OrderItemBase):
     id: int

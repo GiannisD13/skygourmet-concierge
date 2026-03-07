@@ -31,6 +31,19 @@ def _validate_draft(order: Order) -> None:
         raise ValueError(f"Order {order.id} is not editable (status: {order.status})")
 
 
+PAX_QTY_FIELDS = {4: 'qty_4', 6: 'qty_6', 8: 'qty_8', 10: 'qty_10'}
+
+def _get_bundle_item_qty(bi: BundleItem, pax: int) -> int:
+    """Return the admin-configured qty for a given passenger count, falling back to scaled def_quality."""
+    if pax in PAX_QTY_FIELDS:
+        val = getattr(bi, PAX_QTY_FIELDS[pax], None)
+        if val is not None:
+            return val
+        # fallback: scale def_quality (which is qty for 2 pax)
+        return max(1, round(bi.def_quality * pax / 2))
+    return bi.def_quality  # pax == 2 or unrecognised
+
+
 def _expand_bundle(db: Session, order_id: int, bundle_id: int, passenger_count: int) -> List[OrderItem]:
     bundle = db.query(Bundle).filter(
         Bundle.id == bundle_id, Bundle.is_active == True
@@ -49,11 +62,12 @@ def _expand_bundle(db: Session, order_id: int, bundle_id: int, passenger_count: 
         ).first()
         if not item:
             raise ValueError(f"Item {bi.item_id} in bundle {bundle_id} not found or inactive")
+        qty = _get_bundle_item_qty(bi, passenger_count)
         oi = OrderItem(
             order_id=order_id,
             item_id=bi.item_id,
             bundle_id=bundle_id,
-            quantity=bi.def_quality * passenger_count,
+            quantity=qty,
             unit_price=item.price,
         )
         db.add(oi)
@@ -72,7 +86,7 @@ def _add_custom_items(db: Session, order_id: int, custom_items: List[OrderItemCr
         oi = OrderItem(
             order_id=order_id,
             item_id=ci.item_id,
-            bundle_id=None,
+            bundle_id=ci.bundle_id if hasattr(ci, 'bundle_id') else None,
             quantity=ci.quantity,
             unit_price=item.price,
         )
@@ -174,7 +188,7 @@ def create_draft_order(db: Session, user_id: str) -> Order:
 
 
 def add_item_to_order(
-    db: Session, order_id: int, item_id: int, quantity: int
+    db: Session, order_id: int, item_id: int, quantity: int, bundle_id: Optional[int] = None
 ) -> OrderItem:
     order = db.query(Order).filter(Order.id == order_id).first()
     if not order:
@@ -191,7 +205,7 @@ def add_item_to_order(
     order_item = OrderItem(
         order_id=order_id,
         item_id=item_id,
-        bundle_id=None,
+        bundle_id=bundle_id,
         quantity=quantity,
         unit_price=item.price,
     )
@@ -305,20 +319,19 @@ def update_order_details(
         if passenger_count < 1 or passenger_count > 50:
             raise ValueError("Passenger count must be between 1 and 50")
         if passenger_count != order.passenger_count:
-            old_count = order.passenger_count or 1
             order.passenger_count = passenger_count
-            bundle_items = (
+            bundle_order_items = (
                 db.query(OrderItem)
                 .filter(OrderItem.order_id == order_id, OrderItem.bundle_id != None)
                 .all()
             )
-            for oi in bundle_items:
+            for oi in bundle_order_items:
                 bi = db.query(BundleItem).filter(
                     BundleItem.bundle_id == oi.bundle_id,
                     BundleItem.item_id == oi.item_id,
                 ).first()
                 if bi:
-                    oi.quantity = bi.def_quality * passenger_count
+                    oi.quantity = _get_bundle_item_qty(bi, passenger_count)
             db.flush()
             _recalculate_order_total(db, order_id)
 

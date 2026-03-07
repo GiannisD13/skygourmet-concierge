@@ -19,8 +19,9 @@ const AuthCheckoutForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const defaultPax = cartBundles[0]?.paxCount ?? 2;
   const [tailNumber, setTailNumber] = useState('');
-  const [passengerCount, setPassengerCount] = useState(1);
+  const [passengerCount, setPassengerCount] = useState(defaultPax);
   const [flightDate, setFlightDate] = useState<Date | undefined>();
   const [flightTime, setFlightTime] = useState('');
   const [specialRequirements, setSpecialRequirements] = useState('');
@@ -53,24 +54,30 @@ const AuthCheckoutForm = () => {
       // 1. Create draft
       const draft = await api.post<{ id: number }>('/api/v1/orders/draft');
 
-      // 2. Add bundles
+      // 2. Add bundle line items (with bundle_id for grouping)
       for (const b of cartBundles) {
-        await api.post(`/api/v1/orders/draft/bundles/${b.id}`);
+        for (const li of b.lineItems) {
+          if (li.quantity > 0) {
+            await api.post(
+              `/api/v1/orders/draft/items?item_id=${li.id}&quantity=${li.quantity}&bundle_id=${b.id}`
+            );
+          }
+        }
       }
 
-      // 2b. Add individual items
+      // 3. Add standalone items
       for (const i of cartItems) {
         await api.post(`/api/v1/orders/draft/items?item_id=${i.id}&quantity=${i.quantity}`);
       }
 
-      // 3. Update details
+      // 4. Update flight details
       await api.patch('/api/v1/orders/draft/details', {
         tail_number: tailNumber,
         passenger_count: passengerCount,
         flight_date: combinedDate.toISOString(),
       });
 
-      // 4. Confirm
+      // 5. Confirm
       await api.post('/api/v1/orders/draft/confirm');
 
       clearCart();

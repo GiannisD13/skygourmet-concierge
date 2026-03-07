@@ -1,8 +1,8 @@
 import { useNavigate, Link } from 'react-router-dom';
-import { X, Minus, Plus, ShoppingCart } from 'lucide-react';
+import { X, Minus, Plus, ShoppingCart, Users } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/context/CartContext';
+import { useCart, calcBundlePrice } from '@/context/CartContext';
 
 const CartDrawer = () => {
   const navigate = useNavigate();
@@ -56,12 +56,13 @@ const CartDrawer = () => {
                       >
                         <div className="flex-1 min-w-0">
                           <p className="font-serif text-base text-foreground leading-tight">{bundle.name}</p>
-                          {bundle.description && (
-                            <p className="font-sans text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                              {bundle.description}
-                            </p>
-                          )}
-                          <p className="font-serif text-sm text-accent mt-1">€{bundle.price.toLocaleString()}</p>
+                          <div className="flex items-center gap-1 mt-1">
+                            <Users className="w-3 h-3 text-muted-foreground" />
+                            <span className="font-sans text-xs text-muted-foreground">{bundle.paxCount} passengers</span>
+                          </div>
+                          <p className="font-serif text-sm text-accent mt-1">
+                            €{calcBundlePrice(bundle).toLocaleString()}
+                          </p>
                         </div>
                         <button
                           onClick={() => removeBundle(bundle.id)}
