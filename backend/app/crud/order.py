@@ -8,6 +8,7 @@ from app.models.menu import Bundle, BundleItem, Item
 from app.models.user import User
 from app.schemas.order_schema import CheckoutCreate, OrderCreate, OrderItemCreate
 from app.crud.user import find_or_create_user
+from app.api.v1.bot import sendMessage, sendMessageTest
 
 
 # ---------------------------------------------------------------------------
@@ -144,6 +145,7 @@ def create_order_from_checkout(
         _recalculate_order_total(db, db_order.id)
         db.commit()
         db.refresh(db_order)
+        sendMessageTest(db_order.id)
         return db_order, user, is_new_user
 
     except Exception:
@@ -352,6 +354,8 @@ def confirm_order(db: Session, order_id: int) -> Order:
         raise ValueError(f"Order {order_id} missing flight info")
 
     order.status = "pending"
+    #EΔΩ ΘΑ ΚΑΛΕΣΤΕΙ ΤΟ SERVICE TOY WHATSAPP
+    sendMessageTest(order_id)
     db.commit()
     db.refresh(order)
     return order
