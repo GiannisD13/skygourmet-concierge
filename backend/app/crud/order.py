@@ -8,7 +8,7 @@ from app.models.menu import Bundle, BundleItem, Item
 from app.models.user import User
 from app.schemas.order_schema import CheckoutCreate, OrderCreate, OrderItemCreate
 from app.crud.user import find_or_create_user
-from app.api.v1.bot import sendMessage, sendMessageTest
+from app.api.v1.bot import sendMessage, sendMessageTest #used in create_order_from_checkout, confirm_order. Dont forget to change when necassary
 
 
 # ---------------------------------------------------------------------------
