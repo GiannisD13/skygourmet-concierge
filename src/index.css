@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+/* Altitude hero typography — scoped to .altitude-hero, see below */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -259,5 +261,740 @@
     to {
       opacity: 1;
     }
+  }
+}
+
+/* ============================================================
+   Cinematic home page (dark) — visual layer only
+   ============================================================ */
+@layer components {
+  /* Deep cinematic backdrop for the dark home page */
+  .home-cinematic {
+    background:
+      radial-gradient(120% 80% at 50% -10%, hsl(220 40% 16%) 0%, transparent 60%),
+      radial-gradient(80% 60% at 100% 100%, hsl(43 54% 30% / 0.12) 0%, transparent 55%),
+      hsl(var(--background));
+  }
+
+  /* Slightly raised dark band — gives SVG dividers visible contrast */
+  .surface-raised {
+    background-color: hsl(220 30% 12%);
+  }
+
+  /* Glassy dark surface used for cards in the dark theme */
+  .glass-dark {
+    background: linear-gradient(160deg, hsl(220 30% 16% / 0.7) 0%, hsl(220 30% 10% / 0.6) 100%);
+    border: 1px solid hsl(40 33% 98% / 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+}
+
+@layer utilities {
+  /* Subtle film grain — sits over a section, never blocks pointer events */
+  .grain-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Warm gold glow for hero type */
+  .text-glow-gold {
+    text-shadow: 0 0 40px hsl(var(--gold) / 0.35), 0 0 8px hsl(var(--gold) / 0.2);
+  }
+
+  /* Thin gold hairline divider */
+  .gold-hairline {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, hsl(var(--gold) / 0.6), transparent);
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  .animate-float-slow {
+    animation: float-slow 6s ease-in-out infinite;
+  }
+
+  .animate-ken-burns {
+    animation: ken-burns 24s ease-in-out infinite alternate;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+
+  @keyframes ken-burns {
+    from { transform: scale(1.08); }
+    to { transform: scale(1.2); }
+  }
+
+  /* Loading screen — plane orbits its track */
+  .animate-orbit {
+    animation: orbit-spin 2.4s linear infinite;
+  }
+
+  @keyframes orbit-spin {
+    to { transform: rotate(360deg); }
+  }
+}
+
+/* ============================================================
+   Altitude hero — "the jet flies through the headline"
+   Scoped, dark, visual-only. Tokens kept in the design's exact
+   oklch values; serif/sans scoped here so the rest of the site
+   keeps Playfair/Inter.
+   ============================================================ */
+@layer components {
+  /* Shared design tokens — reused as-is by the hero and the network section
+     below (same oklch values + font stacks); declared once. */
+  .altitude-hero,
+  .altitude-network {
+    --hero-bg: oklch(0.13 0.008 60);
+    --hero-bg-deep: oklch(0.08 0.006 60);
+    --hero-cream: oklch(0.94 0.02 80);
+    --hero-cream-dim: oklch(0.72 0.018 80);
+    --hero-gold: oklch(0.78 0.1 80);
+    --hero-rule: oklch(0.94 0.02 80 / 0.16);
+    --hero-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+    --hero-sans: 'Manrope', system-ui, sans-serif;
+  }
+
+  .altitude-hero {
+    position: relative;
+    height: 100vh;
+    min-height: 720px;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--hero-bg);
+    color: var(--hero-cream);
+  }
+
+  /* Background */
+  .altitude-hero .sky {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(60% 50% at 50% 45%, oklch(0.19 0.018 70) 0%, transparent 70%),
+      radial-gradient(120% 70% at 50% 110%, oklch(0.16 0.012 60) 0%, transparent 60%),
+      var(--hero-bg);
+  }
+  .altitude-hero .grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      to bottom,
+      transparent 49.5%,
+      oklch(0.94 0.02 80 / 0.045) 50%,
+      transparent 50.5%
+    );
+    background-size: 100% 18%;
+    background-position: 0 50%;
+    -webkit-mask-image: radial-gradient(60% 60% at 50% 50%, black, transparent 80%);
+    mask-image: radial-gradient(60% 60% at 50% 50%, black, transparent 80%);
+    pointer-events: none;
+    will-change: transform;
+  }
+  .altitude-hero .stars {
+    position: absolute;
+    inset: -10% -5%;
+    background-image:
+      radial-gradient(1.2px 1.2px at 12% 22%, oklch(0.95 0.02 80 / 0.55) 50%, transparent 51%),
+      radial-gradient(1px 1px at 78% 14%, oklch(0.95 0.02 80 / 0.35) 50%, transparent 51%),
+      radial-gradient(1px 1px at 33% 8%, oklch(0.95 0.02 80 / 0.55) 50%, transparent 51%),
+      radial-gradient(1.4px 1.4px at 88% 38%, oklch(0.95 0.02 80 / 0.4) 50%, transparent 51%),
+      radial-gradient(1px 1px at 55% 28%, oklch(0.95 0.02 80 / 0.35) 50%, transparent 51%),
+      radial-gradient(1px 1px at 22% 48%, oklch(0.95 0.02 80 / 0.25) 50%, transparent 51%),
+      radial-gradient(1.6px 1.6px at 68% 58%, oklch(0.78 0.1 80 / 0.5) 50%, transparent 51%),
+      radial-gradient(1px 1px at 8% 70%, oklch(0.95 0.02 80 / 0.3) 50%, transparent 51%),
+      radial-gradient(1px 1px at 92% 78%, oklch(0.95 0.02 80 / 0.35) 50%, transparent 51%);
+    pointer-events: none;
+    will-change: transform;
+  }
+  .altitude-hero .top-fade {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 180px;
+    background: linear-gradient(to bottom, var(--hero-bg-deep), transparent);
+    pointer-events: none;
+    z-index: 8;
+  }
+  .altitude-hero .bottom-fade {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 32%;
+    background: linear-gradient(to bottom, transparent, var(--hero-bg) 80%);
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  /* Coordinate strips (decorative, screen edges) */
+  .altitude-hero .side {
+    position: absolute;
+    top: 50%;
+    z-index: 6;
+    font-family: var(--hero-sans);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--hero-cream-dim);
+    writing-mode: vertical-rl;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    opacity: 0;
+  }
+  .altitude-hero .side .tick {
+    width: 4px;
+    height: 4px;
+    background: var(--hero-gold);
+    border-radius: 50%;
+  }
+  .altitude-hero .side .rule {
+    width: 1px;
+    height: 40px;
+    background: var(--hero-rule);
+  }
+  .altitude-hero .side.left {
+    left: 44px;
+    transform: translateY(-50%) rotate(180deg);
+  }
+  .altitude-hero .side.right {
+    right: 44px;
+    transform: translateY(-50%);
+  }
+  .altitude-hero .side .v {
+    color: var(--hero-cream);
+    letter-spacing: 0.32em;
+  }
+  .altitude-hero .side .gold {
+    color: var(--hero-gold);
+  }
+
+  /* Jet — sits BEHIND the title so it shows through the splitting words */
+  .altitude-hero .jet-stage {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .altitude-hero .jet {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    height: 118vh;
+    width: auto;
+    /* Initial pose; the rAF loop takes over once `ready`. */
+    transform: translate3d(-50%, 110%, 0);
+    transform-origin: 50% 50%;
+    filter:
+      drop-shadow(0 30px 80px oklch(0 0 0 / 0.7))
+      drop-shadow(0 0 50px oklch(0.78 0.1 80 / 0.18));
+    will-change: transform, opacity;
+    opacity: 0;
+  }
+  .altitude-hero .jet-glow {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 80vmin;
+    height: 60vmin;
+    transform: translate3d(-50%, 30%, 0);
+    background: radial-gradient(ellipse at center, oklch(0.78 0.1 80 / 0.22) 0%, transparent 65%);
+    filter: blur(40px);
+    pointer-events: none;
+    will-change: transform, opacity;
+    z-index: 2;
+  }
+
+  /* Headline — grid with a wide centre corridor for the jet */
+  .altitude-hero .title {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    margin: 0;
+    pointer-events: none;
+    font-family: var(--hero-serif);
+    font-weight: 300;
+    font-size: clamp(56px, 9.2vw, 156px);
+    line-height: 0.92;
+    letter-spacing: -0.018em;
+    color: var(--hero-cream);
+    display: grid;
+    grid-template-rows: 1fr auto auto 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .altitude-hero .line {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: baseline;
+    width: 100%;
+    column-gap: clamp(120px, 14vw, 240px);
+    white-space: nowrap;
+  }
+  .altitude-hero .line-1 {
+    grid-row: 2;
+  }
+  .altitude-hero .line-2 {
+    grid-row: 3;
+    margin-top: 0.08em;
+  }
+  .altitude-hero .word {
+    display: inline-block;
+    will-change: transform;
+    overflow: hidden; /* clip the rising .inner */
+    padding: 0 0.02em 0.16em;
+  }
+  .altitude-hero .word.l {
+    justify-self: end;
+    text-align: right;
+  }
+  .altitude-hero .word.r {
+    justify-self: start;
+    text-align: left;
+  }
+  .altitude-hero .inner {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(110%);
+  }
+  .altitude-hero em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--hero-gold);
+  }
+
+  /* Entrance — runs once `ready` adds .is-ready (as the loader lifts) */
+  .altitude-hero.is-ready .side {
+    animation: hero-fade-in 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.8s forwards;
+  }
+  .altitude-hero.is-ready .line-1 .word.l .inner {
+    animation: hero-rise 1.4s cubic-bezier(0.2, 0.78, 0.15, 1) 0.35s forwards;
+  }
+  .altitude-hero.is-ready .line-1 .word.r .inner {
+    animation: hero-rise 1.4s cubic-bezier(0.2, 0.78, 0.15, 1) 0.42s forwards;
+  }
+  .altitude-hero.is-ready .line-2 .word.l .inner {
+    animation: hero-rise 1.4s cubic-bezier(0.2, 0.78, 0.15, 1) 0.55s forwards;
+  }
+  .altitude-hero.is-ready .line-2 .word.r .inner {
+    animation: hero-rise 1.4s cubic-bezier(0.2, 0.78, 0.15, 1) 0.62s forwards;
+  }
+
+  /* ============================================================
+     Altitude network — Greece map + editorial accordion.
+     Sits directly under the hero and reuses the hero tokens above.
+     ============================================================ */
+  .altitude-network {
+    position: relative;
+    z-index: 1;
+    background: var(--hero-bg);
+    color: var(--hero-cream);
+    padding: 40px 0 140px;
+    overflow: hidden;
+  }
+  .altitude-network .routes-grid {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    align-items: center;
+    gap: 0;
+  }
+  /* Map column bleeds to the left viewport edge — no inner padding. */
+  .altitude-network .map-col {
+    padding: 0;
+  }
+  .altitude-network .map-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1.05;
+    background: radial-gradient(60% 50% at 50% 45%, oklch(0.16 0.012 65) 0%, transparent 70%);
+  }
+  .altitude-network .map-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+  .altitude-network .land {
+    fill: oklch(0.2 0.01 70);
+    stroke: oklch(0.78 0.1 80 / 0.45);
+    stroke-width: 0.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    paint-order: fill stroke;
+  }
+  .altitude-network .route-line {
+    fill: none;
+    stroke: oklch(0.78 0.1 80 / 0.55);
+    stroke-width: 0.8;
+    stroke-dasharray: 2 4;
+    stroke-linecap: round;
+    opacity: 0;
+    animation: routeFade 1.4s ease 0.4s forwards;
+  }
+  .altitude-network .marker .ring {
+    fill: none;
+    stroke: var(--hero-gold);
+    stroke-width: 1;
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: ringPulse 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+  }
+  .altitude-network .marker .core {
+    fill: var(--hero-gold);
+    filter: drop-shadow(0 0 6px oklch(0.78 0.1 80 / 0.9));
+    animation: corePulse 2.6s ease-in-out infinite;
+  }
+  .altitude-network .marker.delay-2 .ring,
+  .altitude-network .marker.delay-2 .core {
+    animation-delay: 0.87s;
+  }
+  .altitude-network .marker.delay-3 .ring,
+  .altitude-network .marker.delay-3 .core {
+    animation-delay: 1.73s;
+  }
+  .altitude-network .marker .label {
+    font-family: var(--hero-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    fill: var(--hero-cream);
+    paint-order: stroke;
+    stroke: var(--hero-bg);
+    stroke-width: 3.5;
+  }
+  .altitude-network .marker .label-sub {
+    font-family: var(--hero-sans);
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    fill: var(--hero-cream-dim);
+    paint-order: stroke;
+    stroke: var(--hero-bg);
+    stroke-width: 3;
+  }
+  .altitude-network .marker .leader {
+    stroke: var(--hero-gold);
+    stroke-width: 0.6;
+    opacity: 0.5;
+  }
+
+  /* Network column / accordion */
+  .altitude-network .network-col {
+    padding: 0 clamp(40px, 6vw, 96px) 0 clamp(48px, 6vw, 96px);
+  }
+  .altitude-network .network-inner {
+    max-width: 520px;
+  }
+  .altitude-network .network-label {
+    font-family: var(--hero-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--hero-cream-dim);
+    margin-bottom: 56px;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .altitude-network .network-label::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: var(--hero-cream-dim);
+    opacity: 0.6;
+  }
+  .altitude-network .accordion {
+    border-bottom: 1px solid var(--hero-rule);
+  }
+  .altitude-network .acc-item {
+    border-top: 1px solid var(--hero-rule);
+  }
+  .altitude-network .acc-head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 28px 0;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    transition: color 0.3s ease;
+  }
+  .altitude-network .acc-head:hover {
+    color: var(--hero-gold);
+  }
+  .altitude-network .acc-head:focus-visible {
+    outline: 1px solid var(--hero-gold);
+    outline-offset: 8px;
+  }
+  .altitude-network .acc-name {
+    font-family: var(--hero-serif);
+    font-weight: 300;
+    font-size: clamp(28px, 2.6vw, 40px);
+    line-height: 1;
+    letter-spacing: -0.012em;
+    color: var(--hero-cream);
+    transition: color 0.3s ease;
+  }
+  .altitude-network .acc-head:hover .acc-name {
+    color: var(--hero-gold);
+  }
+  .altitude-network .acc-faint {
+    font-style: italic;
+    color: var(--hero-cream-dim);
+    font-size: 0.6em;
+    letter-spacing: 0;
+    margin-left: 6px;
+  }
+  .altitude-network .acc-icon {
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    position: relative;
+    transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .altitude-network .acc-icon::before,
+  .altitude-network .acc-icon::after {
+    content: '';
+    position: absolute;
+    background: var(--hero-cream-dim);
+    transition: background 0.3s ease;
+  }
+  .altitude-network .acc-icon::before {
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    transform: translateY(-50%);
+  }
+  .altitude-network .acc-icon::after {
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    transform: translateX(-50%);
+  }
+  .altitude-network .acc-item.open .acc-icon {
+    transform: rotate(45deg);
+  }
+  .altitude-network .acc-item.open .acc-icon::before,
+  .altitude-network .acc-item.open .acc-icon::after {
+    background: var(--hero-gold);
+  }
+  .altitude-network .acc-head:hover .acc-icon::before,
+  .altitude-network .acc-head:hover .acc-icon::after {
+    background: var(--hero-gold);
+  }
+  .altitude-network .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .altitude-network .acc-body-inner {
+    padding: 4px 0 32px;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .altitude-network .acc-item.open .acc-body-inner {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .altitude-network .acc-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 14px;
+  }
+  /* Monospace for the ICAO row uses a system stack only — no new webfont
+     beyond the hero's Cormorant/Manrope, per the handoff constraint. */
+  .altitude-network .acc-icao {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--hero-cream-dim);
+  }
+  .altitude-network .acc-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--hero-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--hero-cream-dim);
+  }
+  .altitude-network .acc-pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--hero-gold);
+    box-shadow: 0 0 0 0 oklch(0.78 0.1 80 / 0.6);
+    animation: dotPulse 1.8s ease-in-out infinite;
+  }
+  .altitude-network .acc-desc {
+    font-family: var(--hero-sans);
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--hero-cream-dim);
+    margin: 0;
+    max-width: 44ch;
+  }
+}
+
+/* Responsive — kept outside @layer; Tailwind's layer transform mangles a
+   media query nested inside @layer, and top-level rules still override the
+   layered base, which is exactly what these mobile tweaks need. */
+@media (max-width: 820px) {
+  .altitude-hero .side {
+    font-size: 9px;
+  }
+  .altitude-hero .side.left {
+    left: 18px;
+  }
+  .altitude-hero .side.right {
+    right: 18px;
+  }
+  .altitude-hero .jet {
+    height: 100vh;
+  }
+
+  /* Network stacks to one column: map on top, accordion below. */
+  .altitude-network {
+    padding: 40px 0 100px;
+  }
+  .altitude-network .routes-grid {
+    grid-template-columns: 1fr;
+    gap: 56px;
+  }
+  .altitude-network .network-col {
+    padding: 0 24px;
+  }
+  .altitude-network .network-inner {
+    max-width: none;
+  }
+}
+
+@layer utilities {
+  @keyframes hero-rise {
+    0% {
+      opacity: 0;
+      transform: translateY(110%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes hero-fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* Altitude network map/accordion */
+  @keyframes routeFade {
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes ringPulse {
+    0% {
+      r: 3;
+      opacity: 0.9;
+    }
+    100% {
+      r: 26;
+      opacity: 0;
+    }
+  }
+  @keyframes corePulse {
+    0%,
+    100% {
+      r: 2.4;
+      opacity: 1;
+    }
+    50% {
+      r: 3.6;
+      opacity: 0.85;
+    }
+  }
+  @keyframes dotPulse {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 8px oklch(0.78 0.1 80 / 0.8);
+    }
+    50% {
+      opacity: 0.35;
+      box-shadow: 0 0 0 oklch(0.78 0.1 80 / 0);
+    }
+  }
+}
+
+/* Lenis smooth scroll support */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Respect reduced-motion: kill the decorative looping animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-float-slow,
+  .animate-ken-burns,
+  .animate-orbit {
+    animation: none !important;
+  }
+
+  /* Altitude hero/network: complete entrances instantly and stop the map
+     pulses; the accordion still expands, just without the eased subtlety. */
+  .altitude-hero *,
+  .altitude-hero *::before,
+  .altitude-hero *::after,
+  .altitude-network *,
+  .altitude-network *::before,
+  .altitude-network *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

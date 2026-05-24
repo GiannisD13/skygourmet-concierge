@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plane, Phone, LogIn, User, ChevronDown, ShieldCheck, ShoppingCart } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -17,6 +18,14 @@ const Header = () => {
   const isHome = location.pathname === '/';
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const { totalCount, openCart } = useCart();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <motion.header
@@ -24,7 +33,11 @@ const Header = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-        isHome ? 'bg-transparent' : 'bg-card/95 backdrop-blur-md shadow-elegant'
+        isHome
+          ? scrolled
+            ? 'bg-background/80 backdrop-blur-md border-b border-accent/10'
+            : 'bg-transparent'
+          : 'bg-card/95 backdrop-blur-md shadow-elegant'
       }`}
     >
       <div className="container-luxury">
@@ -47,7 +60,7 @@ const Header = () => {
             <Button variant="ghost" size="sm" onClick={openCart} className="relative p-2">
               <ShoppingCart className="w-5 h-5" />
               {totalCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-accent text-primary text-[10px] font-bold flex items-center justify-center leading-none">
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center leading-none">
                   {totalCount > 9 ? '9+' : totalCount}
                 </span>
               )}

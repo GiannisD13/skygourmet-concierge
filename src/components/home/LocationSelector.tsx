@@ -1,20 +1,13 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { MapPin, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { airports as staticAirports, airportMeta, Airport } from '@/types/catering';
 import { useOrder } from '@/context/OrderContext';
 import { api } from '@/lib/api';
+import ScrollReveal from '@/components/home/ScrollReveal';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.15 } },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 },
-};
+// Alternating diagonal directions so cards fan into place
+const CARD_X = [-60, 0, 60];
 
 const LocationSelector = () => {
   const navigate = useNavigate();
@@ -42,67 +35,53 @@ const LocationSelector = () => {
   };
 
   return (
-    <section className="section-padding bg-secondary/50">
+    <section id="locations" className="section-padding scroll-mt-24 bg-background">
       <div className="container-luxury">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12 md:mb-16"
-        >
-          <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-4">
-            Where is your next departure?
-          </h2>
-          <p className="font-sans text-muted-foreground max-w-md mx-auto">
+        <ScrollReveal x={50} y={50} className="mb-12 text-center md:mb-16">
+          <p className="mb-4 font-sans text-xs uppercase tracking-[0.4em] text-accent">Your Departure</p>
+          <h2 className="mb-4 font-serif text-4xl text-foreground md:text-5xl">Where is your next departure?</h2>
+          <p className="mx-auto max-w-md font-sans text-muted-foreground">
             Select your departure airport to explore our curated catering options
           </p>
-        </motion.div>
+        </ScrollReveal>
 
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
             {[0, 1, 2].map(i => (
-              <div key={i} className="card-luxury bg-card h-48 animate-pulse rounded-lg" />
+              <div key={i} className="glass-dark h-56 animate-pulse rounded-xl" />
             ))}
           </div>
         ) : (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
-          >
-            {airports.map((airport) => (
-              <motion.button
-                key={airport.code}
-                variants={cardVariants}
-                onClick={() => handleSelectAirport(airport)}
-                className="group card-luxury bg-card p-8 text-left"
-              >
-                <div className="flex items-start justify-between mb-6">
-                  <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-accent" />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+            {airports.map((airport, i) => (
+              <ScrollReveal key={airport.code} x={CARD_X[i % CARD_X.length]} y={80}>
+                <button
+                  onClick={() => handleSelectAirport(airport)}
+                  className="glass-dark group relative h-full w-full overflow-hidden rounded-xl p-8 text-left transition-all duration-500 hover:-translate-y-2 hover:border-accent/40 hover:shadow-[0_24px_60px_-20px_hsl(43_54%_59%/0.35)]"
+                >
+                  {/* gold glow that blooms on hover */}
+                  <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-accent/0 blur-3xl transition-colors duration-500 group-hover:bg-accent/20" />
+
+                  <div className="relative mb-8 flex items-start justify-between">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent/30 bg-accent/5">
+                      <MapPin className="h-5 w-5 text-accent" />
+                    </div>
+                    <span className="font-serif text-5xl font-medium text-accent/20 transition-colors duration-500 group-hover:text-accent/70">
+                      {airport.code}
+                    </span>
                   </div>
-                  <span className="font-serif text-4xl font-medium text-accent/30 group-hover:text-accent transition-colors">
-                    {airport.code}
-                  </span>
-                </div>
 
-                <h3 className="font-serif text-2xl text-foreground mb-2">
-                  {airport.city}
-                </h3>
-                <p className="font-sans text-sm text-muted-foreground mb-6">
-                  {airport.name}
-                </p>
+                  <h3 className="relative mb-2 font-serif text-2xl text-foreground">{airport.city}</h3>
+                  <p className="relative mb-8 font-sans text-sm text-muted-foreground">{airport.name}</p>
 
-                <div className="flex items-center gap-2 text-accent font-sans text-sm uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span>Select</span>
-                  <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                </div>
-              </motion.button>
+                  <div className="relative flex items-center gap-2 font-sans text-sm uppercase tracking-wider text-accent opacity-60 transition-all duration-300 group-hover:gap-3 group-hover:opacity-100">
+                    <span>Select</span>
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </button>
+              </ScrollReveal>
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
     </section>

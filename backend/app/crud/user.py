@@ -6,7 +6,7 @@ from app.core.security import hash_password, verify_password
 from typing import List, Optional, Tuple
 
 def get_user(db:Session, user_id:str):
-   return db.query(users.User).filter(users.User.id == user_id).first()
+   return db.query(users.User).filter(users.User.id == user_id).first() 
 
 def get_user_by_phone(db:Session, phone:str):
     return db.query(users.User).filter(users.User.phone == phone).first()
