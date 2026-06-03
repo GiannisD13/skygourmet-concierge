@@ -4,6 +4,7 @@ import { Plane, ArrowRight } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import AltitudeHero from '@/components/home/AltitudeHero';
 import AltitudeNetwork from '@/components/home/AltitudeNetwork';
+import AltitudeHowItWorks from '@/components/home/AltitudeHowItWorks';
 import Marquee from '@/components/home/Marquee';
 import StatsCounter from '@/components/home/StatsCounter';
 import FeaturesSection from '@/components/home/FeaturesSection';
@@ -31,18 +32,19 @@ const Index = () => {
     <MotionConfig reducedMotion="user">
       {firstVisit.current && <LoadingScreen onReveal={reveal} />}
 
-      <div className="dark home-cinematic min-h-screen overflow-x-hidden text-foreground">
+      <div className="dark home-cinematic min-h-screen text-foreground">
         <Header />
         <AltitudeHero ready={loaded} />
         <AltitudeNetwork />
+        <AltitudeHowItWorks />
         <Marquee />
         <StatsCounter />
 
         {/* Stats (background) → Features (raised) */}
-        <SectionDivider className="bg-background text-[hsl(220_30%_12%)]" />
+        <SectionDivider className="bg-background text-[hsl(28_16%_9%)]" />
         <FeaturesSection />
         {/* Features (raised) → Food showcase (background) */}
-        <SectionDivider flip className="bg-background text-[hsl(220_30%_12%)]" />
+        <SectionDivider flip className="bg-background text-[hsl(28_16%_9%)]" />
 
         {/* Looping gourmet words — bridges Features → Collections */}
         <LoopWords />
@@ -51,7 +53,7 @@ const Index = () => {
         <LocationSelector />
 
         {/* CTA (raised) */}
-        <SectionDivider className="bg-background text-[hsl(220_30%_12%)]" />
+        <SectionDivider className="bg-background text-[hsl(28_16%_9%)]" />
         <section className="section-padding surface-raised">
           <div className="container-luxury">
             <ScrollReveal x={-50} y={70} className="mx-auto max-w-2xl text-center">

@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { geoMercator } from 'd3-geo';
+import { useOrder } from '@/context/OrderContext';
+import { airports as staticAirports, airportMeta, Airport } from '@/types/catering';
+import { api } from '@/lib/api';
 
 // --- Map projection (hard-coded; do NOT fitExtent against this dataset, its
 // reversed polygon winding makes geoBounds report global bounds) ---
@@ -91,8 +95,10 @@ function featureToPath(feature: GeoFeature): string {
 }
 
 // --- Accordion data ------------------------------------------------------
-interface Airport {
+// `code` (IATA) maps each row onto a real airport for routing to /menu.
+interface NetworkAirport {
   id: string;
+  code: string;
   name: string;
   suffix: string;
   icao: string;
@@ -100,9 +106,10 @@ interface Airport {
   desc: string;
 }
 
-const AIRPORTS: Airport[] = [
+const AIRPORTS: NetworkAirport[] = [
   {
     id: 'ath',
+    code: 'ATH',
     name: 'Athens',
     suffix: 'Eleftherios Venizelos',
     icao: 'LGAV / ATH · N 37.94° E 23.94°',
@@ -111,6 +118,7 @@ const AIRPORTS: Airport[] = [
   },
   {
     id: 'skg',
+    code: 'SKG',
     name: 'Thessaloniki',
     suffix: 'Macedonia',
     icao: 'LGTS / SKG · N 40.64° E 22.95°',
@@ -119,6 +127,7 @@ const AIRPORTS: Airport[] = [
   },
   {
     id: 'jmk',
+    code: 'JMK',
     name: 'Mykonos',
     suffix: 'Island',
     icao: 'LGMK / JMK · N 37.45° E 25.33°',
@@ -131,10 +140,12 @@ const AccordionItem = ({
   airport,
   open,
   onToggle,
+  onSelect,
 }: {
-  airport: Airport;
+  airport: NetworkAirport;
   open: boolean;
   onToggle: () => void;
+  onSelect: () => void;
 }) => {
   const bodyRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
@@ -175,6 +186,14 @@ const AccordionItem = ({
             </span>
           </div>
           <p className="acc-desc">{airport.desc}</p>
+          {/* Quiet routing affordance — its own zone below a hairline, set apart
+              from the dim description by cream text + a gold "this acts" arrow. */}
+          <div className="acc-cta">
+            <button className="acc-link" type="button" onClick={onSelect}>
+              Select {airport.name}
+              <span className="acc-link-arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
         </div>
       </div>
     </article>
@@ -187,8 +206,36 @@ const AccordionItem = ({
  * airports (right). Sits directly under the hero; reuses the hero's tokens.
  */
 const AltitudeNetwork = () => {
+  const navigate = useNavigate();
+  const { setSelectedAirport } = useOrder();
   const [landPaths, setLandPaths] = useState<string[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [apiAirports, setApiAirports] = useState<Airport[]>([]);
+
+  // Fetch real airports so the row can route with the DB id (which /menu uses
+  // for airport-specific bundles); the static list covers an API outage.
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get<Airport[]>('/api/v1/airports')
+      .then((data) => {
+        if (!cancelled) setApiAirports(data.map((a) => ({ ...a, ...(airportMeta[a.code] ?? {}) })));
+      })
+      .catch(() => {
+        /* fall back to static airports in handleSelect */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Mirror LocationSelector's flow: set the destination, then go to the menu.
+  const handleSelect = (code: string) => {
+    const airport = apiAirports.find((a) => a.code === code) ?? staticAirports.find((a) => a.code === code);
+    if (!airport) return;
+    setSelectedAirport(airport);
+    navigate('/menu');
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -257,6 +304,7 @@ const AltitudeNetwork = () => {
                   airport={a}
                   open={openId === a.id}
                   onToggle={() => setOpenId((prev) => (prev === a.id ? null : a.id))}
+                  onSelect={() => handleSelect(a.code)}
                 />
               ))}
             </div>

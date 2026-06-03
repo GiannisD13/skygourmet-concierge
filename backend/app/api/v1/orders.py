@@ -104,7 +104,7 @@ def update_item_quantity(
     current_user: User = Depends(get_current_user),
 ):
     try:
-        return crud.update_order_item_quantity(db, order_item_id, quantity)
+        return crud.update_order_item_quantity(db, order_item_id, quantity, current_user.id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -116,7 +116,7 @@ def remove_item(
     current_user: User = Depends(get_current_user),
 ):
     try:
-        crud.remove_item_from_order(db, order_item_id)
+        crud.remove_item_from_order(db, order_item_id, current_user.id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

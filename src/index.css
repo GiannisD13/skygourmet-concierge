@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
-/* Altitude hero typography — scoped to .altitude-hero, see below */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Manrope:wght@300;400;500;600&display=swap');
+/* Brand typography — Cormorant Garamond (serif) + Manrope (sans), used app-wide
+   so every page matches the Altitude hero/network/how-it-works sections. */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Manrope:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -22,8 +22,8 @@
     --primary: 220 45% 18%;
     --primary-foreground: 40 33% 98%;
 
-    /* Gold Accent */
-    --accent: 43 54% 59%;
+    /* Gold Accent — aligned to the Altitude hero gold (oklch(0.78 0.1 80)) */
+    --accent: 38 59% 64%;
     --accent-foreground: 220 45% 18%;
 
     /* Secondary - Soft Ivory */
@@ -38,28 +38,28 @@
 
     --border: 40 20% 88%;
     --input: 40 20% 88%;
-    --ring: 43 54% 59%;
+    --ring: 38 59% 64%;
 
     --radius: 0.5rem;
 
     /* Custom Luxury Variables */
     --navy: 220 45% 18%;
     --navy-light: 220 35% 28%;
-    --gold: 43 54% 59%;
-    --gold-light: 43 44% 75%;
-    --gold-dark: 43 60% 45%;
+    --gold: 38 59% 64%;
+    --gold-light: 38 50% 80%;
+    --gold-dark: 38 62% 48%;
     --ivory: 40 33% 98%;
     --cream: 40 33% 96%;
 
-    /* Typography */
-    --font-serif: 'Playfair Display', Georgia, serif;
-    --font-sans: 'Inter', system-ui, sans-serif;
+    /* Typography — brand fonts shared with the Altitude sections */
+    --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+    --font-sans: 'Manrope', system-ui, sans-serif;
 
     /* Shadows */
     --shadow-elegant: 0 4px 20px -4px hsl(220 45% 18% / 0.08);
     --shadow-card: 0 8px 32px -8px hsl(220 45% 18% / 0.12);
     --shadow-hover: 0 12px 40px -8px hsl(220 45% 18% / 0.18);
-    --shadow-gold: 0 4px 24px -4px hsl(43 54% 59% / 0.25);
+    --shadow-gold: 0 4px 24px -4px hsl(38 59% 64% / 0.25);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -71,43 +71,45 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* Warm-dark theme — mirrors the Altitude hero palette (oklch converted to HSL):
+     bg oklch(0.13 0.008 60), cream oklch(0.94 0.02 80), gold oklch(0.78 0.1 80). */
   .dark {
-    --background: 220 26% 8%;
-    --foreground: 40 33% 98%;
+    --background: 24 33% 3%;
+    --foreground: 37 45% 91%;
 
-    --card: 220 26% 12%;
-    --card-foreground: 40 33% 98%;
+    --card: 20 23% 5%;
+    --card-foreground: 37 45% 91%;
 
-    --popover: 220 26% 12%;
-    --popover-foreground: 40 33% 98%;
+    --popover: 20 23% 5%;
+    --popover-foreground: 37 45% 91%;
 
-    --primary: 43 54% 59%;
-    --primary-foreground: 220 45% 18%;
+    --primary: 38 59% 64%;
+    --primary-foreground: 24 33% 3%;
 
-    --accent: 43 54% 59%;
-    --accent-foreground: 220 26% 8%;
+    --accent: 38 59% 64%;
+    --accent-foreground: 24 33% 3%;
 
-    --secondary: 220 26% 16%;
-    --secondary-foreground: 40 33% 98%;
+    --secondary: 30 24% 7%;
+    --secondary-foreground: 37 45% 91%;
 
-    --muted: 220 26% 20%;
-    --muted-foreground: 40 20% 65%;
+    --muted: 30 15% 10%;
+    --muted-foreground: 37 8% 56%;
 
-    --destructive: 0 62% 30%;
+    --destructive: 0 62% 40%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 26% 20%;
-    --input: 220 26% 20%;
-    --ring: 43 54% 59%;
+    --border: 27 15% 14%;
+    --input: 27 15% 14%;
+    --ring: 38 59% 64%;
 
-    --sidebar-background: 220 26% 10%;
-    --sidebar-foreground: 40 33% 95%;
-    --sidebar-primary: 43 54% 59%;
-    --sidebar-primary-foreground: 220 26% 8%;
-    --sidebar-accent: 220 26% 15%;
-    --sidebar-accent-foreground: 40 33% 95%;
-    --sidebar-border: 220 26% 18%;
-    --sidebar-ring: 43 54% 59%;
+    --sidebar-background: 20 23% 5%;
+    --sidebar-foreground: 37 30% 88%;
+    --sidebar-primary: 38 59% 64%;
+    --sidebar-primary-foreground: 24 33% 3%;
+    --sidebar-accent: 30 18% 9%;
+    --sidebar-accent-foreground: 37 30% 88%;
+    --sidebar-border: 27 15% 14%;
+    --sidebar-ring: 38 59% 64%;
   }
 }
 
@@ -271,20 +273,26 @@
   /* Deep cinematic backdrop for the dark home page */
   .home-cinematic {
     background:
-      radial-gradient(120% 80% at 50% -10%, hsl(220 40% 16%) 0%, transparent 60%),
-      radial-gradient(80% 60% at 100% 100%, hsl(43 54% 30% / 0.12) 0%, transparent 55%),
+      radial-gradient(120% 80% at 50% -10%, hsl(28 30% 11%) 0%, transparent 60%),
+      radial-gradient(80% 60% at 100% 100%, hsl(38 55% 28% / 0.12) 0%, transparent 55%),
       hsl(var(--background));
+    /* Clip horizontal bleed (network map / hero strips) WITHOUT becoming a
+       scroll container. `overflow-x: hidden` would force overflow-y to `auto`,
+       which breaks `position: sticky` on the "how it works" stage — it would
+       pin to this wrapper (never internally scrolled) instead of the viewport.
+       `clip` hides the same overflow but creates no scrollport, so sticky works. */
+    overflow-x: clip;
   }
 
-  /* Slightly raised dark band — gives SVG dividers visible contrast */
+  /* Slightly raised warm-dark band — gives SVG dividers visible contrast */
   .surface-raised {
-    background-color: hsl(220 30% 12%);
+    background-color: hsl(28 16% 9%);
   }
 
-  /* Glassy dark surface used for cards in the dark theme */
+  /* Glassy warm-dark surface used for cards in the dark theme */
   .glass-dark {
-    background: linear-gradient(160deg, hsl(220 30% 16% / 0.7) 0%, hsl(220 30% 10% / 0.6) 100%);
-    border: 1px solid hsl(40 33% 98% / 0.08);
+    background: linear-gradient(160deg, hsl(28 16% 12% / 0.7) 0%, hsl(24 20% 6% / 0.6) 100%);
+    border: 1px solid hsl(37 45% 91% / 0.08);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
@@ -353,14 +361,16 @@
 /* ============================================================
    Altitude hero — "the jet flies through the headline"
    Scoped, dark, visual-only. Tokens kept in the design's exact
-   oklch values; serif/sans scoped here so the rest of the site
-   keeps Playfair/Inter.
+   oklch values. The serif/sans here (Cormorant/Manrope) now match
+   the global brand fonts, so the whole site reads consistently.
    ============================================================ */
 @layer components {
-  /* Shared design tokens — reused as-is by the hero and the network section
-     below (same oklch values + font stacks); declared once. */
+  /* Shared design tokens — reused as-is by the hero, the network section, and
+     the "how it works" section below (same oklch values + font stacks);
+     declared once. */
   .altitude-hero,
-  .altitude-network {
+  .altitude-network,
+  .altitude-howitworks {
     --hero-bg: oklch(0.13 0.008 60);
     --hero-bg-deep: oklch(0.08 0.006 60);
     --hero-cream: oklch(0.94 0.02 80);
@@ -866,6 +876,500 @@
     margin: 0;
     max-width: 44ch;
   }
+  /* Routing affordance — a text link, never a button. A hairline above sets it
+     apart from the description; cream text (brighter than the dim copy) + a
+     gold arrow signal it's a separate action without any button chrome. */
+  .altitude-network .acc-cta {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid var(--hero-rule);
+  }
+  .altitude-network .acc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--hero-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--hero-cream);
+    transition: color 0.3s ease;
+  }
+  .altitude-network .acc-link-arrow {
+    color: var(--hero-gold);
+    font-size: 13px;
+    line-height: 1;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  .altitude-network .acc-link:hover {
+    color: var(--hero-gold);
+  }
+  .altitude-network .acc-link:hover .acc-link-arrow {
+    transform: translateX(8px);
+  }
+  .altitude-network .acc-link:focus-visible {
+    outline: 1px solid var(--hero-gold);
+    outline-offset: 6px;
+  }
+
+  /* ---------------- How it works (sticky scrollytelling) ----------------
+     A tall .day-track wraps a sticky 100vh .day-stage holding 5 absolutely
+     stacked frames; scroll progress (bound to the track in JS) crossfades
+     them and advances the bottom timeline. Reuses the hero/network tokens. */
+  .altitude-howitworks {
+    position: relative;
+    background: var(--hero-bg);
+    z-index: 1;
+  }
+  /* Section header sits above the pinned track, in normal flow. */
+  .altitude-howitworks .day-head {
+    text-align: center;
+    padding: 120px 24px 64px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .altitude-howitworks .day-head-eyebrow {
+    font-family: var(--hero-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--hero-gold);
+    margin-bottom: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .altitude-howitworks .day-head-eyebrow::before,
+  .altitude-howitworks .day-head-eyebrow::after {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--hero-gold);
+    opacity: 0.55;
+  }
+  .altitude-howitworks .day-head h2 {
+    font-family: var(--hero-serif);
+    font-weight: 300;
+    font-size: clamp(48px, 6vw, 92px);
+    line-height: 1.02;
+    letter-spacing: -0.018em;
+    color: var(--hero-cream);
+    margin: 0 0 24px;
+  }
+  .altitude-howitworks .day-head h2 em {
+    font-style: italic;
+    color: var(--hero-gold);
+    font-weight: 300;
+  }
+  .altitude-howitworks .day-head p {
+    font-family: var(--hero-sans);
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--hero-cream-dim);
+    max-width: 460px;
+    margin: 0 auto;
+  }
+  .altitude-howitworks .day-track {
+    height: 575vh;
+  }
+  .altitude-howitworks .day-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 720px;
+    overflow: hidden;
+  }
+  /* Faint atmospheric wash matching the hero's vibe. */
+  .altitude-howitworks .day-stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(80% 60% at 50% 110%, oklch(0.18 0.012 65) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .altitude-howitworks .day-frame {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .altitude-howitworks .day-frame.is-active {
+    pointer-events: auto;
+  }
+  .altitude-howitworks .day-frame[data-side='left'] {
+    flex-direction: row;
+  }
+  .altitude-howitworks .day-frame[data-side='right'] {
+    flex-direction: row-reverse;
+  }
+  .altitude-howitworks .day-photo {
+    flex: 0 0 58%;
+    height: 78vh;
+    padding: 0 clamp(24px, 3vw, 60px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* photo ken-burns settle as the frame activates */
+    transition: transform 1.4s ease;
+    transform: scale(1.02);
+  }
+  .altitude-howitworks .day-frame.is-active .day-photo {
+    transform: scale(1);
+  }
+  /* Unifying photo treatment: dark vignette + subtle desaturation so each
+     frame sits inside the brand palette. */
+  .altitude-howitworks .day-photo .photo {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: relative;
+    overflow: hidden;
+    background: oklch(0.1 0.006 60);
+  }
+  .altitude-howitworks .day-photo .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.88) contrast(1.04) saturate(0.85);
+  }
+  .altitude-howitworks .day-photo .photo::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(120% 80% at 50% 50%, transparent 40%, oklch(0 0 0 / 0.45) 100%),
+      linear-gradient(180deg, transparent 60%, oklch(0 0 0 / 0.35) 100%);
+    pointer-events: none;
+  }
+  .altitude-howitworks .day-photo .photo .cap {
+    position: absolute;
+    left: 24px;
+    bottom: 22px;
+    font-family: var(--hero-sans);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--hero-cream);
+    opacity: 0.78;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .altitude-howitworks .day-photo .photo .cap::before {
+    content: '';
+    width: 18px;
+    height: 1px;
+    background: var(--hero-gold);
+  }
+  /* Phone bezel for the sign-in step (step 3) — pure CSS, no image. */
+  .altitude-howitworks .day-photo .phone {
+    --phone-w: min(280px, 36vh);
+    width: var(--phone-w);
+    height: calc(var(--phone-w) * 2.05);
+    margin: 0 auto;
+    border-radius: 38px;
+    padding: 10px;
+    background: linear-gradient(160deg, oklch(0.28 0.012 70) 0%, oklch(0.14 0.008 60) 60%);
+    box-shadow:
+      0 0 0 1px oklch(0.94 0.02 80 / 0.06),
+      0 30px 70px oklch(0 0 0 / 0.55),
+      0 0 60px oklch(0.78 0.1 80 / 0.08);
+    position: relative;
+  }
+  .altitude-howitworks .day-photo .phone-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+    background: #f5f5f1;
+    position: relative;
+  }
+  /* object-position pins the screenshot to the top so the UI fills the whole
+     bezel rather than sizing to its own aspect ratio. */
+  .altitude-howitworks .day-photo .phone-screen img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: top center;
+  }
+  .altitude-howitworks .day-photo .phone::before {
+    /* Dynamic island */
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    width: 86px;
+    height: 22px;
+    border-radius: 14px;
+    background: oklch(0.06 0.004 60);
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  .altitude-howitworks .day-photo .phone::after {
+    /* Side button */
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 22%;
+    width: 2px;
+    height: 60px;
+    background: oklch(0.2 0.01 70);
+    border-radius: 2px 0 0 2px;
+  }
+  .altitude-howitworks .day-copy {
+    flex: 0 0 42%;
+    padding: 0 clamp(48px, 5vw, 96px);
+    color: var(--hero-cream);
+  }
+  .altitude-howitworks .day-num {
+    font-family: var(--hero-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(56px, 5.6vw, 92px);
+    line-height: 0.95;
+    color: var(--hero-gold);
+    letter-spacing: -0.018em;
+    margin: 0;
+  }
+  .altitude-howitworks .day-phase {
+    margin: 18px 0 4px;
+    font-family: var(--hero-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--hero-cream-dim);
+  }
+  .altitude-howitworks .day-phase .sep {
+    color: oklch(0.94 0.02 80 / 0.25);
+    margin: 0 10px;
+  }
+  /* T+ timestamps use a system mono stack — no new webfont, per the handoff
+     constraint (same call as the network's ICAO row). */
+  .altitude-howitworks .day-tplus {
+    font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--hero-cream-dim);
+    text-transform: uppercase;
+  }
+  .altitude-howitworks .day-divider {
+    width: 56px;
+    height: 1px;
+    background: var(--hero-rule);
+    margin: 36px 0 28px;
+  }
+  .altitude-howitworks .day-eyebrow {
+    font-family: var(--hero-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--hero-gold);
+    margin-bottom: 18px;
+  }
+  .altitude-howitworks .day-title {
+    font-family: var(--hero-serif);
+    font-weight: 300;
+    font-size: clamp(36px, 4vw, 60px);
+    line-height: 1.02;
+    letter-spacing: -0.012em;
+    color: var(--hero-cream);
+    margin: 0 0 24px;
+    max-width: 14ch;
+  }
+  .altitude-howitworks .day-title em {
+    font-style: italic;
+    color: var(--hero-gold);
+    font-weight: 300;
+  }
+  .altitude-howitworks .day-desc {
+    font-family: var(--hero-sans);
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--hero-cream-dim);
+    margin: 0 0 36px;
+    max-width: 42ch;
+  }
+  .altitude-howitworks .day-pairing {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .altitude-howitworks .day-pairing .pkey {
+    font-family: var(--hero-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    text-transform: uppercase;
+    color: var(--hero-cream-dim);
+  }
+  .altitude-howitworks .day-pairing .pkey::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 1px;
+    background: var(--hero-gold);
+    vertical-align: middle;
+    margin-right: 12px;
+    transform: translateY(-3px);
+  }
+  .altitude-howitworks .day-pairing .pval {
+    font-family: var(--hero-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 18px;
+    color: var(--hero-cream);
+    letter-spacing: 0;
+  }
+  /* Per-frame entrance — copy rises slightly as the frame crossfades in. */
+  .altitude-howitworks .day-frame .day-copy > * {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .altitude-howitworks .day-frame.is-active .day-copy > * {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .altitude-howitworks .day-frame.is-active .day-copy > *:nth-child(1) { transition-delay: 0.04s; }
+  .altitude-howitworks .day-frame.is-active .day-copy > *:nth-child(2) { transition-delay: 0.08s; }
+  .altitude-howitworks .day-frame.is-active .day-copy > *:nth-child(3) { transition-delay: 0.12s; }
+  .altitude-howitworks .day-frame.is-active .day-copy > *:nth-child(4) { transition-delay: 0.18s; }
+  .altitude-howitworks .day-frame.is-active .day-copy > *:nth-child(5) { transition-delay: 0.22s; }
+  .altitude-howitworks .day-frame.is-active .day-copy > *:nth-child(6) { transition-delay: 0.26s; }
+  .altitude-howitworks .day-frame.is-active .day-copy > *:nth-child(7) { transition-delay: 0.30s; }
+  .altitude-howitworks .day-frame.is-active .day-copy > *:nth-child(8) { transition-delay: 0.34s; }
+  /* ----- Bottom timeline ----- */
+  .altitude-howitworks .day-tl {
+    position: absolute;
+    left: 50%;
+    bottom: 56px;
+    transform: translateX(-50%);
+    width: min(820px, 78vw);
+    z-index: 4;
+    pointer-events: none;
+  }
+  .altitude-howitworks .day-tl-rail {
+    position: relative;
+    height: 1px;
+    background: var(--hero-rule);
+  }
+  .altitude-howitworks .day-tl-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--hero-gold);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+    will-change: transform;
+  }
+  .altitude-howitworks .day-tl-dot {
+    position: absolute;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--hero-bg);
+    border: 1px solid oklch(0.94 0.02 80 / 0.35);
+    transform: translate(-50%, -50%);
+    transition: background 0.4s ease, border-color 0.4s ease, transform 0.4s ease;
+  }
+  .altitude-howitworks .day-tl-dot.is-past {
+    background: var(--hero-gold);
+    border-color: var(--hero-gold);
+  }
+  .altitude-howitworks .day-tl-dot.is-active {
+    background: var(--hero-gold);
+    border-color: var(--hero-gold);
+    transform: translate(-50%, -50%) scale(1.4);
+    box-shadow: 0 0 14px oklch(0.78 0.1 80 / 0.9);
+  }
+  .altitude-howitworks .day-tl-head {
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--hero-gold);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 20px oklch(0.78 0.1 80 / 0.7);
+    will-change: left;
+    z-index: 1;
+  }
+  .altitude-howitworks .day-tl-labels {
+    position: relative;
+    margin-top: 18px;
+    height: 28px;
+  }
+  .altitude-howitworks .day-tl-label {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    text-align: center;
+    font-family: var(--hero-sans);
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--hero-cream-dim);
+    transition: color 0.4s ease;
+    white-space: nowrap;
+  }
+  .altitude-howitworks .day-tl-label .n {
+    display: block;
+    font-family: var(--hero-serif);
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0;
+    color: var(--hero-cream-dim);
+    margin-bottom: 4px;
+    transition: color 0.4s ease;
+  }
+  .altitude-howitworks .day-tl-label.is-active {
+    color: var(--hero-cream);
+  }
+  .altitude-howitworks .day-tl-label.is-active .n {
+    color: var(--hero-gold);
+  }
+  /* Top-left chip mirroring the active frame's phase + step number. */
+  .altitude-howitworks .day-meta-tl {
+    position: absolute;
+    top: 48px;
+    left: 56px;
+    z-index: 4;
+    font-family: var(--hero-sans);
+    font-size: 10px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--hero-cream-dim);
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .altitude-howitworks .day-meta-tl .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--hero-gold);
+  }
+  .altitude-howitworks .day-meta-tl .v {
+    color: var(--hero-cream);
+  }
 }
 
 /* Responsive — kept outside @layer; Tailwind's layer transform mangles a
@@ -898,6 +1402,116 @@
   }
   .altitude-network .network-inner {
     max-width: none;
+  }
+
+  /* How it works — compact stacked layout; photo + copy centre as a unit so
+     there's no void above the bottom-anchored timeline. */
+  .altitude-howitworks .day-head {
+    padding: 80px 24px 32px;
+  }
+  .altitude-howitworks .day-track {
+    height: 700vh; /* more scroll runway per step on small screens */
+  }
+  .altitude-howitworks .day-stage {
+    min-height: 0;
+    height: 100vh;
+  }
+  .altitude-howitworks .day-meta-tl {
+    display: none; /* no room — the timeline covers this */
+  }
+  .altitude-howitworks .day-frame {
+    padding: 24px 0 90px;
+  }
+  .altitude-howitworks .day-frame[data-side='left'],
+  .altitude-howitworks .day-frame[data-side='right'] {
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+  }
+  .altitude-howitworks .day-photo {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 36vh;
+    padding: 0 20px;
+  }
+  .altitude-howitworks .day-photo .phone {
+    --phone-w: min(190px, 30vh);
+  }
+  .altitude-howitworks .day-photo .phone::before {
+    top: 16px;
+    width: 64px;
+    height: 16px;
+  }
+  .altitude-howitworks .day-photo .photo .cap {
+    left: 16px;
+    bottom: 14px;
+    font-size: 8px;
+    gap: 8px;
+  }
+  .altitude-howitworks .day-copy {
+    flex: 0 0 auto;
+    width: 100%;
+    padding: 0 20px;
+  }
+  .altitude-howitworks .day-num {
+    font-size: 36px;
+    line-height: 1;
+  }
+  .altitude-howitworks .day-phase {
+    font-size: 9px;
+    margin: 12px 0 2px;
+  }
+  .altitude-howitworks .day-tplus {
+    font-size: 9px;
+  }
+  .altitude-howitworks .day-divider {
+    margin: 18px 0 14px;
+    width: 40px;
+  }
+  .altitude-howitworks .day-eyebrow {
+    font-size: 9px;
+    margin-bottom: 10px;
+  }
+  .altitude-howitworks .day-title {
+    font-size: 28px;
+    line-height: 1.05;
+    margin: 0 0 12px;
+    max-width: none;
+  }
+  .altitude-howitworks .day-desc {
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 0 0 18px;
+    max-width: none;
+  }
+  .altitude-howitworks .day-pairing {
+    gap: 10px;
+  }
+  .altitude-howitworks .day-pairing .pkey {
+    font-size: 9px;
+  }
+  .altitude-howitworks .day-pairing .pkey::before {
+    width: 16px;
+    margin-right: 8px;
+  }
+  .altitude-howitworks .day-pairing .pval {
+    font-size: 14px;
+  }
+  .altitude-howitworks .day-tl {
+    bottom: 20px;
+    width: 92vw;
+  }
+  .altitude-howitworks .day-tl-labels {
+    margin-top: 12px;
+    height: 22px;
+  }
+  .altitude-howitworks .day-tl-label {
+    font-size: 7px;
+    letter-spacing: 0.2em;
+  }
+  .altitude-howitworks .day-tl-label .n {
+    font-size: 11px;
+    margin-bottom: 2px;
   }
 }
 
@@ -992,7 +1606,10 @@ html.lenis body {
   .altitude-hero *::after,
   .altitude-network *,
   .altitude-network *::before,
-  .altitude-network *::after {
+  .altitude-network *::after,
+  .altitude-howitworks *,
+  .altitude-howitworks *::before,
+  .altitude-howitworks *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

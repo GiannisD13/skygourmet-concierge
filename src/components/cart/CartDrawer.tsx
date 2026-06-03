@@ -20,7 +20,7 @@ const CartDrawer = () => {
 
   return (
     <Sheet open={isOpen} onOpenChange={open => { if (!open) closeCart(); }}>
-      <SheetContent side="right" className="w-full sm:w-[420px] flex flex-col p-0">
+      <SheetContent side="right" className="dark w-full sm:w-[420px] flex flex-col p-0 bg-background text-foreground">
         <SheetHeader className="px-6 py-5 border-b border-border">
           <SheetTitle className="font-serif text-xl flex items-center gap-2">
             <ShoppingCart className="w-5 h-5 text-accent" />

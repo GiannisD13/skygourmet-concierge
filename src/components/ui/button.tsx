@@ -17,8 +17,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         // Luxury variants
         navy: "bg-primary text-primary-foreground font-sans uppercase tracking-[0.1em] hover:shadow-hover hover:-translate-y-0.5",
-        gold: "border-2 border-accent text-accent bg-transparent font-sans uppercase tracking-[0.1em] hover:bg-accent hover:text-primary",
-        "gold-solid": "bg-accent text-primary font-sans uppercase tracking-[0.1em] hover:bg-gold-dark hover:shadow-gold hover:-translate-y-0.5",
+        gold: "border-2 border-accent text-accent bg-transparent font-sans uppercase tracking-[0.1em] hover:bg-accent hover:text-accent-foreground",
+        "gold-solid": "bg-accent text-accent-foreground font-sans uppercase tracking-[0.1em] hover:bg-gold-dark hover:shadow-gold hover:-translate-y-0.5",
         "navy-outline": "border-2 border-primary text-primary bg-transparent font-sans uppercase tracking-[0.1em] hover:bg-primary hover:text-primary-foreground",
       },
       size: {

@@ -53,7 +53,7 @@ const Confirmation = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="dark min-h-screen bg-background text-foreground">
         <Header />
         <main className="pt-24 pb-16">
           <div className="container-luxury section-padding max-w-2xl space-y-4">
@@ -69,7 +69,7 @@ const Confirmation = () => {
   if (!order) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="dark min-h-screen bg-background text-foreground">
       <Header />
 
       <main className="pt-24 pb-16">

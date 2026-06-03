@@ -238,13 +238,16 @@ def add_bundle_to_order(
 
 
 def update_order_item_quantity(
-    db: Session, order_item_id: int, new_quantity: int
+    db: Session, order_item_id: int, new_quantity: int, user_id: str
 ) -> OrderItem:
     order_item = db.query(OrderItem).filter(OrderItem.id == order_item_id).first()
     if not order_item:
         raise ValueError(f"OrderItem {order_item_id} not found")
 
     order = db.query(Order).filter(Order.id == order_item.order_id).first()
+    # Ownership check: prevent modifying line items in another user's order (IDOR).
+    if not order or order.user_id != user_id:
+        raise ValueError(f"OrderItem {order_item_id} not found")
     _validate_draft(order)
 
     if new_quantity < 1:
@@ -258,12 +261,15 @@ def update_order_item_quantity(
     return order_item
 
 
-def remove_item_from_order(db: Session, order_item_id: int) -> None:
+def remove_item_from_order(db: Session, order_item_id: int, user_id: str) -> None:
     order_item = db.query(OrderItem).filter(OrderItem.id == order_item_id).first()
     if not order_item:
         raise ValueError(f"OrderItem {order_item_id} not found")
 
     order = db.query(Order).filter(Order.id == order_item.order_id).first()
+    # Ownership check: prevent deleting line items in another user's order (IDOR).
+    if not order or order.user_id != user_id:
+        raise ValueError(f"OrderItem {order_item_id} not found")
     _validate_draft(order)
 
     order_id = order_item.order_id

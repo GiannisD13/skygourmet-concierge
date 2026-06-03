@@ -55,7 +55,7 @@ const LoadingScreen = ({ onReveal }: { onReveal: () => void }) => {
         <div className="animate-orbit absolute inset-0">
           <div
             className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2"
-            style={{ filter: 'drop-shadow(0 0 10px hsl(43 54% 59% / 0.6))' }}
+            style={{ filter: 'drop-shadow(0 0 10px hsl(38 59% 64% / 0.6))' }}
           >
             <svg width="34" height="34" viewBox="0 0 100 100" fill="hsl(var(--accent))" aria-hidden="true">
               <path d={JET_PATH} />

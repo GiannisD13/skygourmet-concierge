@@ -97,6 +97,15 @@ def find_or_create_user(
         or_(users.User.phone == phone, users.User.email == email)
     ).first()
     if user:
+        # An account already exists for this email/phone. Only treat the guest
+        # as that user if they prove ownership with the correct password —
+        # otherwise anyone knowing the email could check out as them and be
+        # issued a JWT for the account (account takeover).
+        if not verify_password(password, user.hashed_password):
+            raise ValueError(
+                "An account with this email or phone already exists. "
+                "Please log in to continue."
+            )
         return user, False
 
     db_user = users.User(
